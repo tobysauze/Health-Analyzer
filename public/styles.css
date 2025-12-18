@@ -56,7 +56,7 @@ body {
 /* Floating sidebar toggle (only visible when collapsed) */
 #sidebarToggleBtnFloating {
     position: fixed;
-    top: 88px;
+    top: 130px;
     left: 18px;
     z-index: 1100;
     border-radius: 999px;
@@ -83,14 +83,38 @@ body.sidebar-collapsed .sidebar-collapse-btn {
     display: none;
 }
 
-/* Style the in-menu collapse button */
+/* Style the in-menu collapse button to look like a tab button */
 .sidebar-collapse-btn {
-    border-bottom: 1px solid rgba(102, 126, 234, 0.15) !important;
-    margin-bottom: 8px !important;
+    padding: 12px 14px;
+    border: none;
+    background: transparent;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(102, 126, 234, 0.15);
+    margin-bottom: 8px;
+    width: 100%;
+    text-align: left;
+}
+
+.sidebar-collapse-btn:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
 }
 
 .sidebar-collapse-btn i {
     transition: transform 0.3s ease;
+    font-size: 14px;
+    width: 20px;
+    text-align: center;
 }
 
 .auth-user-badge {
@@ -204,7 +228,7 @@ body.sidebar-collapsed .sidebar-collapse-btn {
 
 .tab-navigation {
     position: fixed;
-    top: 100px; /* Below header */
+    top: 130px; /* More space below header */
     left: 20px;
     bottom: 20px;
     display: flex;
