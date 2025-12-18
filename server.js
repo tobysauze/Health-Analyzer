@@ -5631,11 +5631,23 @@ async function startInteractiveGarminSync(socket, { days = 30 }) {
   const cli = process.env.GARMINDB_CLI || 'garmindb_cli.py';
   const cliArgs = [cli, '--all', '--download', '--import', '--analyze', '--latest'];
 
-  socket.emit('garmin:log', `Spawned: ${cli} ${cliArgs.slice(1).join(' ')}`);
+  // Use the wrapper script to handle interactive auth via garth
+  const wrapperScript = 'garmin_auth_wrapper.py';
+
+  // Arguments for the wrapper: [wrapperScript, ...originalCliArgs]
+  // The wrapper will internally call the CLI with these args after auth.
+  // We use "-u" for python to ensure unbuffered output for real-time logs.
+  const pythonArgs = ['-u', wrapperScript, ...cliArgs];
+
+  socket.emit('garmin:log', `Spawned: python3 ${pythonArgs.join(' ')}`);
 
   // Spawn process with pipe stdio
   const { spawn } = require('child_process');
-  const child = spawn(cliArgs[0], cliArgs.slice(1), {
+
+  // Ensure we find python3
+  const pythonCmd = 'python3';
+
+  const child = spawn(pythonCmd, pythonArgs, {
     cwd: process.cwd(),
     stdio: ['pipe', 'pipe', 'pipe']
   });
@@ -5647,13 +5659,12 @@ async function startInteractiveGarminSync(socket, { days = 30 }) {
     socket.emit('garmin:log', str);
     buffer += str;
 
-    // Detect Prompts (Heuristic based on GarminDB/Python prompts)
-    // Common prompts: "Username: ", "Password: ", "MFA Code: "
+    // Detect Prompts (wrapper uses standard "Username:" and "Password:")
     if (str.match(/Username:/i)) {
       socket.emit('garmin:prompt', { field: 'username', label: 'Garmin Email' });
     } else if (str.match(/Password:/i)) {
       socket.emit('garmin:prompt', { field: 'password', label: 'Garmin Password', type: 'password' });
-    } else if (str.match(/Authentication code:/i) || str.match(/MFA/i) || str.match(/Code:/i)) {
+    } else if (str.match(/Authentication code:/i) || str.match(/MFA/i) || str.match(/Code:/i) || str.match(/Enter code:/i)) {
       socket.emit('garmin:prompt', { field: 'mfa', label: '2FA Code / Email Code' });
     }
   });
