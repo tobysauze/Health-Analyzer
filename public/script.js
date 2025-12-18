@@ -5485,8 +5485,13 @@ function startGarminSync() {
         term.textContent += `\n[Process Finished with exit code ${code}]`;
         inputCont.style.display = 'none';
         if (code === 0) {
+            // Refresh everything that might have changed
             refreshFitnessCharts();
             loadRecentWorkouts();
+            // Also refresh trends if the function exists
+            if (typeof refreshTrendsCharts === 'function') refreshTrendsCharts();
+            if (typeof loadDashboardData === 'function') loadDashboardData();
+            showNotification('Sync complete! Dashboard updated.', 'success');
         }
     });
 

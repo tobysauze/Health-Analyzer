@@ -5593,9 +5593,10 @@ function analyzeGeneticData(data) {
 
 
 async function startInteractiveGarminSync(socket, { days = 30 }) {
+  // We allow manual sync via socket even if autosync is technically "disabled" in env.
+  // The env var ENABLE_GARMINDB_AUTOSYNC is mostly for the cron job.
   if (String(process.env.ENABLE_GARMINDB_AUTOSYNC || '').toLowerCase() !== 'true') {
-    socket.emit('garmin:error', 'GarminDB autosync is disabled in env.local');
-    return;
+    socket.emit('garmin:log', '[WARN] Autosync is disabled in env.local, but proceeding with manual sync request...\n');
   }
 
   const cli = process.env.GARMINDB_CLI || 'garmindb_cli.py';
