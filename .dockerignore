@@ -1,0 +1,18 @@
+node_modules
+npm-debug.log
+
+# local DB/state
+data
+health_data.db
+sessions.sqlite
+session-secret.local
+
+# local env (do not bake secrets into image)
+env.local
+.env
+
+# uploads (mounted at runtime)
+uploads
+
+# mobile app (not needed for server image)
+mobile

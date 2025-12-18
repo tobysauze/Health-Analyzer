@@ -1,0 +1,597 @@
+INFO:/Users/tobysauze/.local/pipx/venvs/garmindb/lib/python3.12/site-packages/idbutils/version.py:/Users/tobysauze/.local/bin/garmindb_cli.py has been tested on Python 1...1...0
+INFO:/Users/tobysauze/.local/pipx/venvs/garmindb/lib/python3.12/site-packages/idbutils/version.py:/Users/tobysauze/.local/bin/garmindb_cli.py 1...1...0
+INFO:/Users/tobysauze/.local/pipx/venvs/garmindb/lib/python3.12/site-packages/garmindb/plugin_manager.py:Loading GarminDb plugins from /Users/tobysauze/HealthData/Plugins
+INFO:/Users/tobysauze/.local/pipx/venvs/garmindb/lib/python3.12/site-packages/idbutils/plugin.py:Loading plugins from /Users/tobysauze/HealthData/Plugins
+INFO:root:Enabled statistics: [<Statistics.monitoring: 1>, <Statistics.steps: 2>, <Statistics.itime: 3>, <Statistics.sleep: 4>, <Statistics.rhr: 5>, <Statistics.weight: 6>, <Statistics.activities: 7>]
+INFO:/Users/tobysauze/.local/bin/garmindb_cli.py:___Downloading Latest Data___
+INFO:root:load session from /Users/tobysauze/.GarminDb/garth_session
+INFO:root:login: Toby (dcd29e96-6039-4d27-8181-f03d7bede4d2)
+INFO:root:Fetching 25 activities to /Users/tobysauze/HealthData/FitFiles/Activities
+INFO:root:get_activity_types: '/Users/tobysauze/HealthData/FitFiles/Activities'
+INFO:/Users/tobysauze/.local/pipx/venvs/garmindb/lib/python3.12/site-packages/garmindb/download.py:Getting activities: '/Users/tobysauze/HealthData/FitFiles/Activities' (25) temp /var/folders/rj/f10bgxy51yv9czdcsf7w4h140000gn/T/tmpghlxe6xr
+INFO:root:get_activity_summaries
+INFO:root:get_activities: Treadmill Running (21239156740)
+INFO:root:get_activities: skipping download of 21239156740, already present
+INFO:root:get_activities: Treadmill Running (21230389134)
+INFO:root:get_activities: skipping download of 21230389134, already present
+INFO:root:get_activities: La Ciotat Walking (18963119669)
+INFO:root:get_activities: skipping download of 18963119669, already present
+INFO:root:get_activities: La Ciotat Running (18894949269)
+INFO:root:get_activities: skipping download of 18894949269, already present
+INFO:root:get_activities: La Ciotat Running (18841392950)
+INFO:root:get_activities: skipping download of 18841392950, already present
+INFO:root:get_activities: La Ciotat Running (18784233895)
+INFO:root:get_activities: skipping download of 18784233895, already present
+INFO:root:get_activities: Cornwall Cycling (17672101810)
+INFO:root:get_activities: skipping download of 17672101810, already present
+INFO:root:get_activities: Nice Walking (17653401149)
+INFO:root:get_activities: skipping download of 17653401149, already present
+INFO:root:get_activities: Cycling (17207270863)
+INFO:root:get_activities: skipping download of 17207270863, already present
+INFO:root:get_activities: Cornwall Cycling (16320811602)
+INFO:root:get_activities: skipping download of 16320811602, already present
+INFO:root:get_activities: La Ciotat Running (15879200389)
+INFO:root:get_activities: skipping download of 15879200389, already present
+INFO:root:get_activities: Pool Swim (15810482502)
+INFO:root:get_activities: skipping download of 15810482502, already present
+INFO:root:get_activities: La Ciotat Running (15760650145)
+INFO:root:get_activities: skipping download of 15760650145, already present
+INFO:root:get_activities: La Ciotat Running (15724393755)
+INFO:root:get_activities: skipping download of 15724393755, already present
+INFO:root:get_activities: La Ciotat Running (15473342638)
+INFO:root:get_activities: skipping download of 15473342638, already present
+INFO:root:get_activities: La Ciotat Running (15357767372)
+INFO:root:get_activities: skipping download of 15357767372, already present
+INFO:root:get_activities: La Ciotat Running (15272684951)
+INFO:root:get_activities: skipping download of 15272684951, already present
+INFO:root:get_activities: La Ciotat Running (15242279846)
+INFO:root:get_activities: skipping download of 15242279846, already present
+INFO:root:get_activities: La Ciotat Running (15112293280)
+INFO:root:get_activities: skipping download of 15112293280, already present
+INFO:root:get_activities: La Ciotat Running (15043472233)
+INFO:root:get_activities: skipping download of 15043472233, already present
+INFO:root:get_activities: La Ciotat - Base (14922097062)
+INFO:root:get_activities: skipping download of 14922097062, already present
+INFO:root:get_activities: La Ciotat - Base (14822851771)
+INFO:root:get_activities: skipping download of 14822851771, already present
+INFO:root:get_activities: La Ciotat Running (14789866270)
+INFO:root:get_activities: skipping download of 14789866270, already present
+INFO:root:get_activities: Base (12857213845)
+INFO:root:get_activities: skipping download of 12857213845, already present
+INFO:root:get_activities: Treadmill Running (10949881230)
+INFO:root:get_activities: skipping download of 10949881230, already present
+INFO:root:unzip_files: from /var/folders/rj/f10bgxy51yv9czdcsf7w4h140000gn/T/tmpghlxe6xr to /Users/tobysauze/HealthData/FitFiles/Activities
+INFO:/Users/tobysauze/.local/bin/garmindb_cli.py:Downloading latest monitoring data from: 2025-12-12 23:59:59
+INFO:root:Date range to update: 2025-12-11 (3) to /Users/tobysauze/HealthData/FitFiles/Monitoring
+INFO:root:Getting daily summaries: 2025-12-11 (3)
+INFO:root:get_summary_day: 2025-12-11
+INFO:root:get_summary_day: 2025-12-12
+INFO:root:get_summary_day: 2025-12-13
+INFO:root:Getting hydration: 2025-12-11 (3)
+INFO:root:Getting monitoring: 2025-12-11 (3)
+INFO:root:get_monitoring_day: 2025-12-11 to /var/folders/rj/f10bgxy51yv9czdcsf7w4h140000gn/T/tmp558tt40b
+INFO:root:unzip_files: from /var/folders/rj/f10bgxy51yv9czdcsf7w4h140000gn/T/tmp558tt40b to /Users/tobysauze/HealthData/FitFiles/Monitoring/2025
+INFO:root:get_monitoring_day: 2025-12-12 to /var/folders/rj/f10bgxy51yv9czdcsf7w4h140000gn/T/tmpreqpz48x
+INFO:root:unzip_files: from /var/folders/rj/f10bgxy51yv9czdcsf7w4h140000gn/T/tmpreqpz48x to /Users/tobysauze/HealthData/FitFiles/Monitoring/2025
+INFO:root:get_monitoring_day: 2025-12-13 to /var/folders/rj/f10bgxy51yv9czdcsf7w4h140000gn/T/tmp839d9g72
+INFO:root:unzip_files: from /var/folders/rj/f10bgxy51yv9czdcsf7w4h140000gn/T/tmp839d9g72 to /Users/tobysauze/HealthData/FitFiles/Monitoring/2025
+INFO:root:Saved monitoring files for 2025-12-11 (3) to /Users/tobysauze/HealthData/FitFiles/Monitoring for processing
+INFO:idbutils.db_object:Found time_col_name timestamp for table Attributes
+INFO:idbutils.db_object:Found time_col_name timestamp for table Device
+INFO:/Users/tobysauze/.local/bin/garmindb_cli.py:Downloading latest sleep data from: 2025-12-12
+INFO:root:Date range to update: 2025-12-11 (3) to /Users/tobysauze/HealthData/Sleep
+INFO:root:Getting sleep: 2025-12-11 (3)
+INFO:root:Saved sleep files for 2025-12-11 (3) to /Users/tobysauze/HealthData/Sleep for processing
+INFO:/Users/tobysauze/.local/bin/garmindb_cli.py:Recent weight data not found, using: 2019-12-31 : 2175
+INFO:root:Date range to update: 2019-12-31 (2175) to /Users/tobysauze/HealthData/Weight
+INFO:root:Getting weight: 2019-12-31 (2175)
+INFO:root:Checking weight: 2019-12-31 overwrite False
+INFO:root:Checking weight: 2020-01-01 overwrite False
+INFO:root:Checking weight: 2020-01-02 overwrite False
+INFO:root:Checking weight: 2020-01-03 overwrite False
+INFO:root:Checking weight: 2020-01-04 overwrite False
+INFO:root:Checking weight: 2020-01-05 overwrite False
+INFO:root:Checking weight: 2020-01-06 overwrite False
+INFO:root:Checking weight: 2020-01-07 overwrite False
+INFO:root:Checking weight: 2020-01-08 overwrite False
+INFO:root:Checking weight: 2020-01-09 overwrite False
+INFO:root:Checking weight: 2020-01-10 overwrite False
+INFO:root:Checking weight: 2020-01-11 overwrite False
+INFO:root:Checking weight: 2020-01-12 overwrite False
+INFO:root:Checking weight: 2020-01-13 overwrite False
+INFO:root:Checking weight: 2020-01-14 overwrite False
+INFO:root:Checking weight: 2020-01-15 overwrite False
+INFO:root:Checking weight: 2020-01-16 overwrite False
+INFO:root:Checking weight: 2020-01-17 overwrite False
+INFO:root:Checking weight: 2020-01-18 overwrite False
+INFO:root:Checking weight: 2020-01-19 overwrite False
+INFO:root:Checking weight: 2020-01-20 overwrite False
+INFO:root:Checking weight: 2020-01-21 overwrite False
+INFO:root:Checking weight: 2020-01-22 overwrite False
+INFO:root:Checking weight: 2020-01-23 overwrite False
+INFO:root:Checking weight: 2020-01-24 overwrite False
+INFO:root:Checking weight: 2020-01-25 overwrite False
+INFO:root:Checking weight: 2020-01-26 overwrite False
+INFO:root:Checking weight: 2020-01-27 overwrite False
+INFO:root:Checking weight: 2020-01-28 overwrite False
+INFO:root:Checking weight: 2020-01-29 overwrite False
+INFO:root:Checking weight: 2020-01-30 overwrite False
+INFO:root:Checking weight: 2020-01-31 overwrite False
+INFO:root:Checking weight: 2020-02-01 overwrite False
+INFO:root:Checking weight: 2020-02-02 overwrite False
+INFO:root:Checking weight: 2020-02-03 overwrite False
+INFO:root:Checking weight: 2020-02-04 overwrite False
+INFO:root:Checking weight: 2020-02-05 overwrite False
+INFO:root:Checking weight: 2020-02-06 overwrite False
+INFO:root:Checking weight: 2020-02-07 overwrite False
+INFO:root:Checking weight: 2020-02-08 overwrite False
+INFO:root:Checking weight: 2020-02-09 overwrite False
+INFO:root:Checking weight: 2020-02-10 overwrite False
+INFO:root:Checking weight: 2020-02-11 overwrite False
+INFO:root:Checking weight: 2020-02-12 overwrite False
+INFO:root:Checking weight: 2020-02-13 overwrite False
+INFO:root:Checking weight: 2020-02-14 overwrite False
+INFO:root:Checking weight: 2020-02-15 overwrite False
+INFO:root:Checking weight: 2020-02-16 overwrite False
+INFO:root:Checking weight: 2020-02-17 overwrite False
+INFO:root:Checking weight: 2020-02-18 overwrite False
+INFO:root:Checking weight: 2020-02-19 overwrite False
+INFO:root:Checking weight: 2020-02-20 overwrite False
+INFO:root:Checking weight: 2020-02-21 overwrite False
+INFO:root:Checking weight: 2020-02-22 overwrite False
+INFO:root:Checking weight: 2020-02-23 overwrite False
+INFO:root:Checking weight: 2020-02-24 overwrite False
+INFO:root:Checking weight: 2020-02-25 overwrite False
+INFO:root:Checking weight: 2020-02-26 overwrite False
+INFO:root:Checking weight: 2020-02-27 overwrite False
+INFO:root:Checking weight: 2020-02-28 overwrite False
+INFO:root:Checking weight: 2020-02-29 overwrite False
+INFO:root:Checking weight: 2020-03-01 overwrite False
+INFO:root:Checking weight: 2020-03-02 overwrite False
+INFO:root:Checking weight: 2020-03-03 overwrite False
+INFO:root:Checking weight: 2020-03-04 overwrite False
+INFO:root:Checking weight: 2020-03-05 overwrite False
+INFO:root:Checking weight: 2020-03-06 overwrite False
+INFO:root:Checking weight: 2020-03-07 overwrite False
+INFO:root:Checking weight: 2020-03-08 overwrite False
+INFO:root:Checking weight: 2020-03-09 overwrite False
+INFO:root:Checking weight: 2020-03-10 overwrite False
+INFO:root:Checking weight: 2020-03-11 overwrite False
+INFO:root:Checking weight: 2020-03-12 overwrite False
+INFO:root:Checking weight: 2020-03-13 overwrite False
+INFO:root:Checking weight: 2020-03-14 overwrite False
+INFO:root:Checking weight: 2020-03-15 overwrite False
+INFO:root:Checking weight: 2020-03-16 overwrite False
+INFO:root:Checking weight: 2020-03-17 overwrite False
+INFO:root:Checking weight: 2020-03-18 overwrite False
+INFO:root:Checking weight: 2020-03-19 overwrite False
+INFO:root:Checking weight: 2020-03-20 overwrite False
+INFO:root:Checking weight: 2020-03-21 overwrite False
+INFO:root:Checking weight: 2020-03-22 overwrite False
+INFO:root:Checking weight: 2020-03-23 overwrite False
+INFO:root:Checking weight: 2020-03-24 overwrite False
+INFO:root:Checking weight: 2020-03-25 overwrite False
+INFO:root:Checking weight: 2020-03-26 overwrite False
+INFO:root:Checking weight: 2020-03-27 overwrite False
+INFO:root:Checking weight: 2020-03-28 overwrite False
+INFO:root:Checking weight: 2020-03-29 overwrite False
+INFO:root:Checking weight: 2020-03-30 overwrite False
+INFO:root:Checking weight: 2020-03-31 overwrite False
+INFO:root:Checking weight: 2020-04-01 overwrite False
+INFO:root:Checking weight: 2020-04-02 overwrite False
+INFO:root:Checking weight: 2020-04-03 overwrite False
+INFO:root:Checking weight: 2020-04-04 overwrite False
+INFO:root:Checking weight: 2020-04-05 overwrite False
+INFO:root:Checking weight: 2020-04-06 overwrite False
+INFO:root:Checking weight: 2020-04-07 overwrite False
+INFO:root:Checking weight: 2020-04-08 overwrite False
+INFO:root:Checking weight: 2020-04-09 overwrite False
+INFO:root:Checking weight: 2020-04-10 overwrite False
+INFO:root:Checking weight: 2020-04-11 overwrite False
+INFO:root:Checking weight: 2020-04-12 overwrite False
+INFO:root:Checking weight: 2020-04-13 overwrite False
+INFO:root:Checking weight: 2020-04-14 overwrite False
+INFO:root:Checking weight: 2020-04-15 overwrite False
+INFO:root:Checking weight: 2020-04-16 overwrite False
+INFO:root:Checking weight: 2020-04-17 overwrite False
+INFO:root:Checking weight: 2020-04-18 overwrite False
+INFO:root:Checking weight: 2020-04-19 overwrite False
+INFO:root:Checking weight: 2020-04-20 overwrite False
+INFO:root:Checking weight: 2020-04-21 overwrite False
+INFO:root:Checking weight: 2020-04-22 overwrite False
+INFO:root:Checking weight: 2020-04-23 overwrite False
+INFO:root:Checking weight: 2020-04-24 overwrite False
+INFO:root:Checking weight: 2020-04-25 overwrite False
+INFO:root:Checking weight: 2020-04-26 overwrite False
+INFO:root:Checking weight: 2020-04-27 overwrite False
+INFO:root:Checking weight: 2020-04-28 overwrite False
+INFO:root:Checking weight: 2020-04-29 overwrite False
+INFO:root:Checking weight: 2020-04-30 overwrite False
+INFO:root:Checking weight: 2020-05-01 overwrite False
+INFO:root:Checking weight: 2020-05-02 overwrite False
+INFO:root:Checking weight: 2020-05-03 overwrite False
+INFO:root:Checking weight: 2020-05-04 overwrite False
+INFO:root:Checking weight: 2020-05-05 overwrite False
+INFO:root:Checking weight: 2020-05-06 overwrite False
+INFO:root:Checking weight: 2020-05-07 overwrite False
+INFO:root:Checking weight: 2020-05-08 overwrite False
+INFO:root:Checking weight: 2020-05-09 overwrite False
+INFO:root:Checking weight: 2020-05-10 overwrite False
+INFO:root:Checking weight: 2020-05-11 overwrite False
+INFO:root:Checking weight: 2020-05-12 overwrite False
+INFO:root:Checking weight: 2020-05-13 overwrite False
+INFO:root:Checking weight: 2020-05-14 overwrite False
+INFO:root:Checking weight: 2020-05-15 overwrite False
+INFO:root:Checking weight: 2020-05-16 overwrite False
+INFO:root:Checking weight: 2020-05-17 overwrite False
+INFO:root:Checking weight: 2020-05-18 overwrite False
+INFO:root:Checking weight: 2020-05-19 overwrite False
+INFO:root:Checking weight: 2020-05-20 overwrite False
+INFO:root:Checking weight: 2020-05-21 overwrite False
+INFO:root:Checking weight: 2020-05-22 overwrite False
+INFO:root:Checking weight: 2020-05-23 overwrite False
+INFO:root:Checking weight: 2020-05-24 overwrite False
+INFO:root:Checking weight: 2020-05-25 overwrite False
+INFO:root:Checking weight: 2020-05-26 overwrite False
+INFO:root:Checking weight: 2020-05-27 overwrite False
+INFO:root:Checking weight: 2020-05-28 overwrite False
+INFO:root:Checking weight: 2020-05-29 overwrite False
+INFO:root:Checking weight: 2020-05-30 overwrite False
+INFO:root:Checking weight: 2020-05-31 overwrite False
+INFO:root:Checking weight: 2020-06-01 overwrite False
+INFO:root:Checking weight: 2020-06-02 overwrite False
+INFO:root:Checking weight: 2020-06-03 overwrite False
+INFO:root:Checking weight: 2020-06-04 overwrite False
+INFO:root:Checking weight: 2020-06-05 overwrite False
+INFO:root:Checking weight: 2020-06-06 overwrite False
+INFO:root:Checking weight: 2020-06-07 overwrite False
+INFO:root:Checking weight: 2020-06-08 overwrite False
+INFO:root:Checking weight: 2020-06-09 overwrite False
+INFO:root:Checking weight: 2020-06-10 overwrite False
+INFO:root:Checking weight: 2020-06-11 overwrite False
+INFO:root:Checking weight: 2020-06-12 overwrite False
+INFO:root:Checking weight: 2020-06-13 overwrite False
+INFO:root:Checking weight: 2020-06-14 overwrite False
+INFO:root:Checking weight: 2020-06-15 overwrite False
+INFO:root:Checking weight: 2020-06-16 overwrite False
+INFO:root:Checking weight: 2020-06-17 overwrite False
+INFO:root:Checking weight: 2020-06-18 overwrite False
+INFO:root:Checking weight: 2020-06-19 overwrite False
+INFO:root:Checking weight: 2020-06-20 overwrite False
+INFO:root:Checking weight: 2020-06-21 overwrite False
+INFO:root:Checking weight: 2020-06-22 overwrite False
+INFO:root:Checking weight: 2020-06-23 overwrite False
+INFO:root:Checking weight: 2020-06-24 overwrite False
+INFO:root:Checking weight: 2020-06-25 overwrite False
+INFO:root:Checking weight: 2020-06-26 overwrite False
+INFO:root:Checking weight: 2020-06-27 overwrite False
+INFO:root:Checking weight: 2020-06-28 overwrite False
+INFO:root:Checking weight: 2020-06-29 overwrite False
+INFO:root:Checking weight: 2020-06-30 overwrite False
+INFO:root:Checking weight: 2020-07-01 overwrite False
+INFO:root:Checking weight: 2020-07-02 overwrite False
+INFO:root:Checking weight: 2020-07-03 overwrite False
+INFO:root:Checking weight: 2020-07-04 overwrite False
+INFO:root:Checking weight: 2020-07-05 overwrite False
+INFO:root:Checking weight: 2020-07-06 overwrite False
+INFO:root:Checking weight: 2020-07-07 overwrite False
+INFO:root:Checking weight: 2020-07-08 overwrite False
+INFO:root:Checking weight: 2020-07-09 overwrite False
+INFO:root:Checking weight: 2020-07-10 overwrite False
+INFO:root:Checking weight: 2020-07-11 overwrite False
+INFO:root:Checking weight: 2020-07-12 overwrite False
+INFO:root:Checking weight: 2020-07-13 overwrite False
+INFO:root:Checking weight: 2020-07-14 overwrite False
+INFO:root:Checking weight: 2020-07-15 overwrite False
+INFO:root:Checking weight: 2020-07-16 overwrite False
+INFO:root:Checking weight: 2020-07-17 overwrite False
+INFO:root:Checking weight: 2020-07-18 overwrite False
+INFO:root:Checking weight: 2020-07-19 overwrite False
+INFO:root:Checking weight: 2020-07-20 overwrite False
+INFO:root:Checking weight: 2020-07-21 overwrite False
+INFO:root:Checking weight: 2020-07-22 overwrite False
+INFO:root:Checking weight: 2020-07-23 overwrite False
+INFO:root:Checking weight: 2020-07-24 overwrite False
+INFO:root:Checking weight: 2020-07-25 overwrite False
+INFO:root:Checking weight: 2020-07-26 overwrite False
+INFO:root:Checking weight: 2020-07-27 overwrite False
+INFO:root:Checking weight: 2020-07-28 overwrite False
+INFO:root:Checking weight: 2020-07-29 overwrite False
+INFO:root:Checking weight: 2020-07-30 overwrite False
+INFO:root:Checking weight: 2020-07-31 overwrite False
+INFO:root:Checking weight: 2020-08-01 overwrite False
+INFO:root:Checking weight: 2020-08-02 overwrite False
+INFO:root:Checking weight: 2020-08-03 overwrite False
+INFO:root:Checking weight: 2020-08-04 overwrite False
+INFO:root:Checking weight: 2020-08-05 overwrite False
+INFO:root:Checking weight: 2020-08-06 overwrite False
+INFO:root:Checking weight: 2020-08-07 overwrite False
+INFO:root:Checking weight: 2020-08-08 overwrite False
+INFO:root:Checking weight: 2020-08-09 overwrite False
+INFO:root:Checking weight: 2020-08-10 overwrite False
+INFO:root:Checking weight: 2020-08-11 overwrite False
+INFO:root:Checking weight: 2020-08-12 overwrite False
+INFO:root:Checking weight: 2020-08-13 overwrite False
+INFO:root:Checking weight: 2020-08-14 overwrite False
+INFO:root:Checking weight: 2020-08-15 overwrite False
+INFO:root:Checking weight: 2020-08-16 overwrite False
+INFO:root:Checking weight: 2020-08-17 overwrite False
+INFO:root:Checking weight: 2020-08-18 overwrite False
+INFO:root:Checking weight: 2020-08-19 overwrite False
+INFO:root:Checking weight: 2020-08-20 overwrite False
+INFO:root:Checking weight: 2020-08-21 overwrite False
+INFO:root:Checking weight: 2020-08-22 overwrite False
+INFO:root:Checking weight: 2020-08-23 overwrite False
+INFO:root:Checking weight: 2020-08-24 overwrite False
+INFO:root:Checking weight: 2020-08-25 overwrite False
+INFO:root:Checking weight: 2020-08-26 overwrite False
+INFO:root:Checking weight: 2020-08-27 overwrite False
+INFO:root:Checking weight: 2020-08-28 overwrite False
+INFO:root:Checking weight: 2020-08-29 overwrite False
+INFO:root:Checking weight: 2020-08-30 overwrite False
+INFO:root:Checking weight: 2020-08-31 overwrite False
+INFO:root:Checking weight: 2020-09-01 overwrite False
+INFO:root:Checking weight: 2020-09-02 overwrite False
+INFO:root:Checking weight: 2020-09-03 overwrite False
+INFO:root:Checking weight: 2020-09-04 overwrite False
+INFO:root:Checking weight: 2020-09-05 overwrite False
+INFO:root:Checking weight: 2020-09-06 overwrite False
+INFO:root:Checking weight: 2020-09-07 overwrite False
+INFO:root:Checking weight: 2020-09-08 overwrite False
+INFO:root:Checking weight: 2020-09-09 overwrite False
+INFO:root:Checking weight: 2020-09-10 overwrite False
+INFO:root:Checking weight: 2020-09-11 overwrite False
+INFO:root:Checking weight: 2020-09-12 overwrite False
+INFO:root:Checking weight: 2020-09-13 overwrite False
+INFO:root:Checking weight: 2020-09-14 overwrite False
+INFO:root:Checking weight: 2020-09-15 overwrite False
+INFO:root:Checking weight: 2020-09-16 overwrite False
+INFO:root:Checking weight: 2020-09-17 overwrite False
+INFO:root:Checking weight: 2020-09-18 overwrite False
+INFO:root:Checking weight: 2020-09-19 overwrite False
+INFO:root:Checking weight: 2020-09-20 overwrite False
+INFO:root:Checking weight: 2020-09-21 overwrite False
+INFO:root:Checking weight: 2020-09-22 overwrite False
+INFO:root:Checking weight: 2020-09-23 overwrite False
+INFO:root:Checking weight: 2020-09-24 overwrite False
+INFO:root:Checking weight: 2020-09-25 overwrite False
+INFO:root:Checking weight: 2020-09-26 overwrite False
+INFO:root:Checking weight: 2020-09-27 overwrite False
+INFO:root:Checking weight: 2020-09-28 overwrite False
+INFO:root:Checking weight: 2020-09-29 overwrite False
+INFO:root:Checking weight: 2020-09-30 overwrite False
+INFO:root:Checking weight: 2020-10-01 overwrite False
+INFO:root:Checking weight: 2020-10-02 overwrite False
+INFO:root:Checking weight: 2020-10-03 overwrite False
+INFO:root:Checking weight: 2020-10-04 overwrite False
+INFO:root:Checking weight: 2020-10-05 overwrite False
+INFO:root:Checking weight: 2020-10-06 overwrite False
+INFO:root:Checking weight: 2020-10-07 overwrite False
+INFO:root:Checking weight: 2020-10-08 overwrite False
+INFO:root:Checking weight: 2020-10-09 overwrite False
+INFO:root:Checking weight: 2020-10-10 overwrite False
+INFO:root:Checking weight: 2020-10-11 overwrite False
+INFO:root:Checking weight: 2020-10-12 overwrite False
+INFO:root:Checking weight: 2020-10-13 overwrite False
+INFO:root:Checking weight: 2020-10-14 overwrite False
+INFO:root:Checking weight: 2020-10-15 overwrite False
+INFO:root:Checking weight: 2020-10-16 overwrite False
+INFO:root:Checking weight: 2020-10-17 overwrite False
+INFO:root:Checking weight: 2020-10-18 overwrite False
+INFO:root:Checking weight: 2020-10-19 overwrite False
+INFO:root:Checking weight: 2020-10-20 overwrite False
+INFO:root:Checking weight: 2020-10-21 overwrite False
+INFO:root:Checking weight: 2020-10-22 overwrite False
+INFO:root:Checking weight: 2020-10-23 overwrite False
+INFO:root:Checking weight: 2020-10-24 overwrite False
+INFO:root:Checking weight: 2020-10-25 overwrite False
+INFO:root:Checking weight: 2020-10-26 overwrite False
+INFO:root:Checking weight: 2020-10-27 overwrite False
+INFO:root:Checking weight: 2020-10-28 overwrite False
+INFO:root:Checking weight: 2020-10-29 overwrite False
+INFO:root:Checking weight: 2020-10-30 overwrite False
+INFO:root:Checking weight: 2020-10-31 overwrite False
+INFO:root:Checking weight: 2020-11-01 overwrite False
+INFO:root:Checking weight: 2020-11-02 overwrite False
+INFO:root:Checking weight: 2020-11-03 overwrite False
+INFO:root:Checking weight: 2020-11-04 overwrite False
+INFO:root:Checking weight: 2020-11-05 overwrite False
+INFO:root:Checking weight: 2020-11-06 overwrite False
+INFO:root:Checking weight: 2020-11-07 overwrite False
+INFO:root:Checking weight: 2020-11-08 overwrite False
+INFO:root:Checking weight: 2020-11-09 overwrite False
+INFO:root:Checking weight: 2020-11-10 overwrite False
+INFO:root:Checking weight: 2020-11-11 overwrite False
+INFO:root:Checking weight: 2020-11-12 overwrite False
+INFO:root:Checking weight: 2020-11-13 overwrite False
+INFO:root:Checking weight: 2020-11-14 overwrite False
+INFO:root:Checking weight: 2020-11-15 overwrite False
+INFO:root:Checking weight: 2020-11-16 overwrite False
+INFO:root:Checking weight: 2020-11-17 overwrite False
+INFO:root:Checking weight: 2020-11-18 overwrite False
+INFO:root:Checking weight: 2020-11-19 overwrite False
+INFO:root:Checking weight: 2020-11-20 overwrite False
+INFO:root:Checking weight: 2020-11-21 overwrite False
+INFO:root:Checking weight: 2020-11-22 overwrite False
+INFO:root:Checking weight: 2020-11-23 overwrite False
+INFO:root:Checking weight: 2020-11-24 overwrite False
+INFO:root:Checking weight: 2020-11-25 overwrite False
+INFO:root:Checking weight: 2020-11-26 overwrite False
+INFO:root:Checking weight: 2020-11-27 overwrite False
+INFO:root:Checking weight: 2020-11-28 overwrite False
+INFO:root:Checking weight: 2020-11-29 overwrite False
+INFO:root:Checking weight: 2020-11-30 overwrite False
+INFO:root:Checking weight: 2020-12-01 overwrite False
+INFO:root:Checking weight: 2020-12-02 overwrite False
+INFO:root:Checking weight: 2020-12-03 overwrite False
+INFO:root:Checking weight: 2020-12-04 overwrite False
+INFO:root:Checking weight: 2020-12-05 overwrite False
+INFO:root:Checking weight: 2020-12-06 overwrite False
+INFO:root:Checking weight: 2020-12-07 overwrite False
+INFO:root:Checking weight: 2020-12-08 overwrite False
+INFO:root:Checking weight: 2020-12-09 overwrite False
+INFO:root:Checking weight: 2020-12-10 overwrite False
+INFO:root:Checking weight: 2020-12-11 overwrite False
+INFO:root:Checking weight: 2020-12-12 overwrite False
+INFO:root:Checking weight: 2020-12-13 overwrite False
+INFO:root:Checking weight: 2020-12-14 overwrite False
+INFO:root:Checking weight: 2020-12-15 overwrite False
+INFO:root:Checking weight: 2020-12-16 overwrite False
+INFO:root:Checking weight: 2020-12-17 overwrite False
+INFO:root:Checking weight: 2020-12-18 overwrite False
+INFO:root:Checking weight: 2020-12-19 overwrite False
+INFO:root:Checking weight: 2020-12-20 overwrite False
+INFO:root:Checking weight: 2020-12-21 overwrite False
+INFO:root:Checking weight: 2020-12-22 overwrite False
+INFO:root:Checking weight: 2020-12-23 overwrite False
+INFO:root:Checking weight: 2020-12-24 overwrite False
+INFO:root:Checking weight: 2020-12-25 overwrite False
+INFO:root:Checking weight: 2020-12-26 overwrite False
+INFO:root:Checking weight: 2020-12-27 overwrite False
+INFO:root:Checking weight: 2020-12-28 overwrite False
+INFO:root:Checking weight: 2020-12-29 overwrite False
+INFO:root:Checking weight: 2020-12-30 overwrite False
+INFO:root:Checking weight: 2020-12-31 overwrite False
+INFO:root:Checking weight: 2021-01-01 overwrite False
+INFO:root:Checking weight: 2021-01-02 overwrite False
+INFO:root:Checking weight: 2021-01-03 overwrite False
+INFO:root:Checking weight: 2021-01-04 overwrite False
+INFO:root:Checking weight: 2021-01-05 overwrite False
+INFO:root:Checking weight: 2021-01-06 overwrite False
+INFO:root:Checking weight: 2021-01-07 overwrite False
+INFO:root:Checking weight: 2021-01-08 overwrite False
+INFO:root:Checking weight: 2021-01-09 overwrite False
+INFO:root:Checking weight: 2021-01-10 overwrite False
+INFO:root:Checking weight: 2021-01-11 overwrite False
+INFO:root:Checking weight: 2021-01-12 overwrite False
+INFO:root:Checking weight: 2021-01-13 overwrite False
+INFO:root:Checking weight: 2021-01-14 overwrite False
+INFO:root:Checking weight: 2021-01-15 overwrite False
+INFO:root:Checking weight: 2021-01-16 overwrite False
+INFO:root:Checking weight: 2021-01-17 overwrite False
+INFO:root:Checking weight: 2021-01-18 overwrite False
+INFO:root:Checking weight: 2021-01-19 overwrite False
+INFO:root:Checking weight: 2021-01-20 overwrite False
+INFO:root:Checking weight: 2021-01-21 overwrite False
+INFO:root:Checking weight: 2021-01-22 overwrite False
+INFO:root:Checking weight: 2021-01-23 overwrite False
+INFO:root:Checking weight: 2021-01-24 overwrite False
+INFO:root:Checking weight: 2021-01-25 overwrite False
+INFO:root:Checking weight: 2021-01-26 overwrite False
+INFO:root:Checking weight: 2021-01-27 overwrite False
+INFO:root:Checking weight: 2021-01-28 overwrite False
+INFO:root:Checking weight: 2021-01-29 overwrite False
+INFO:root:Checking weight: 2021-01-30 overwrite False
+INFO:root:Checking weight: 2021-01-31 overwrite False
+INFO:root:Checking weight: 2021-02-01 overwrite False
+INFO:root:Checking weight: 2021-02-02 overwrite False
+INFO:root:Checking weight: 2021-02-03 overwrite False
+INFO:root:Checking weight: 2021-02-04 overwrite False
+INFO:root:Checking weight: 2021-02-05 overwrite False
+INFO:root:Checking weight: 2021-02-06 overwrite False
+INFO:root:Checking weight: 2021-02-07 overwrite False
+INFO:root:Checking weight: 2021-02-08 overwrite False
+INFO:root:Checking weight: 2021-02-09 overwrite False
+INFO:root:Checking weight: 2021-02-10 overwrite False
+INFO:root:Checking weight: 2021-02-11 overwrite False
+INFO:root:Checking weight: 2021-02-12 overwrite False
+INFO:root:Checking weight: 2021-02-13 overwrite False
+INFO:root:Checking weight: 2021-02-14 overwrite False
+INFO:root:Checking weight: 2021-02-15 overwrite False
+INFO:root:Checking weight: 2021-02-16 overwrite False
+INFO:root:Checking weight: 2021-02-17 overwrite False
+INFO:root:Checking weight: 2021-02-18 overwrite False
+INFO:root:Checking weight: 2021-02-19 overwrite False
+INFO:root:Checking weight: 2021-02-20 overwrite False
+INFO:root:Checking weight: 2021-02-21 overwrite False
+INFO:root:Checking weight: 2021-02-22 overwrite False
+INFO:root:Checking weight: 2021-02-23 overwrite False
+INFO:root:Checking weight: 2021-02-24 overwrite False
+INFO:root:Checking weight: 2021-02-25 overwrite False
+INFO:root:Checking weight: 2021-02-26 overwrite False
+INFO:root:Checking weight: 2021-02-27 overwrite False
+INFO:root:Checking weight: 2021-02-28 overwrite False
+INFO:root:Checking weight: 2021-03-01 overwrite False
+INFO:root:Checking weight: 2021-03-02 overwrite False
+INFO:root:Checking weight: 2021-03-03 overwrite False
+INFO:root:Checking weight: 2021-03-04 overwrite False
+INFO:root:Checking weight: 2021-03-05 overwrite False
+INFO:root:Checking weight: 2021-03-06 overwrite False
+INFO:root:Checking weight: 2021-03-07 overwrite False
+INFO:root:Checking weight: 2021-03-08 overwrite False
+INFO:root:Checking weight: 2021-03-09 overwrite False
+INFO:root:Checking weight: 2021-03-10 overwrite False
+INFO:root:Checking weight: 2021-03-11 overwrite False
+INFO:root:Checking weight: 2021-03-12 overwrite False
+INFO:root:Checking weight: 2021-03-13 overwrite False
+INFO:root:Checking weight: 2021-03-14 overwrite False
+INFO:root:Checking weight: 2021-03-15 overwrite False
+INFO:root:Checking weight: 2021-03-16 overwrite False
+INFO:root:Checking weight: 2021-03-17 overwrite False
+INFO:root:Checking weight: 2021-03-18 overwrite False
+INFO:root:Checking weight: 2021-03-19 overwrite False
+INFO:root:Checking weight: 2021-03-20 overwrite False
+INFO:root:Checking weight: 2021-03-21 overwrite False
+INFO:root:Checking weight: 2021-03-22 overwrite False
+INFO:root:Checking weight: 2021-03-23 overwrite False
+INFO:root:Checking weight: 2021-03-24 overwrite False
+INFO:root:Checking weight: 2021-03-25 overwrite False
+INFO:root:Checking weight: 2021-03-26 overwrite False
+INFO:root:Checking weight: 2021-03-27 overwrite False
+INFO:root:Checking weight: 2021-03-28 overwrite False
+INFO:root:Checking weight: 2021-03-29 overwrite False
+INFO:root:Checking weight: 2021-03-30 overwrite False
+INFO:root:Checking weight: 2021-03-31 overwrite False
+INFO:root:Checking weight: 2021-04-01 overwrite False
+INFO:root:Checking weight: 2021-04-02 overwrite False
+INFO:root:Checking weight: 2021-04-03 overwrite False
+INFO:root:Checking weight: 2021-04-04 overwrite False
+INFO:root:Checking weight: 2021-04-05 overwrite False
+INFO:root:Checking weight: 2021-04-06 overwrite False
+INFO:root:Checking weight: 2021-04-07 overwrite False
+INFO:root:Checking weight: 2021-04-08 overwrite False
+INFO:root:Checking weight: 2021-04-09 overwrite False
+INFO:root:Checking weight: 2021-04-10 overwrite False
+INFO:root:Checking weight: 2021-04-11 overwrite False
+INFO:root:Checking weight: 2021-04-12 overwrite False
+INFO:root:Checking weight: 2021-04-13 overwrite False
+INFO:root:Checking weight: 2021-04-14 overwrite False
+INFO:root:Checking weight: 2021-04-15 overwrite False
+INFO:root:Checking weight: 2021-04-16 overwrite False
+INFO:root:Checking weight: 2021-04-17 overwrite False
+INFO:root:Checking weight: 2021-04-18 overwrite False
+INFO:root:Checking weight: 2021-04-19 overwrite False
+INFO:root:Checking weight: 2021-04-20 overwrite False
+INFO:root:Checking weight: 2021-04-21 overwrite False
+INFO:root:Checking weight: 2021-04-22 overwrite False
+INFO:root:Checking weight: 2021-04-23 overwrite False
+INFO:root:Checking weight: 2021-04-24 overwrite False
+INFO:root:Checking weight: 2021-04-25 overwrite False
+INFO:root:Checking weight: 2021-04-26 overwrite False
+INFO:root:Checking weight: 2021-04-27 overwrite False
+INFO:root:Checking weight: 2021-04-28 overwrite False
+INFO:root:Checking weight: 2021-04-29 overwrite False
+INFO:root:Checking weight: 2021-04-30 overwrite False
+INFO:root:Checking weight: 2021-05-01 overwrite False
+INFO:root:Checking weight: 2021-05-02 overwrite False
+INFO:root:Checking weight: 2021-05-03 overwrite False
+INFO:root:Checking weight: 2021-05-04 overwrite False
+INFO:root:Checking weight: 2021-05-05 overwrite False
+INFO:root:Checking weight: 2021-05-06 overwrite False
+INFO:root:Checking weight: 2021-05-07 overwrite False
+INFO:root:Checking weight: 2021-05-08 overwrite False
+INFO:root:Checking weight: 2021-05-09 overwrite False
+INFO:root:Checking weight: 2021-05-10 overwrite False
+INFO:root:Checking weight: 2021-05-11 overwrite False
+INFO:root:Checking weight: 2021-05-12 overwrite False
+INFO:root:Checking weight: 2021-05-13 overwrite False
+INFO:root:Checking weight: 2021-05-14 overwrite False
+INFO:root:Checking weight: 2021-05-15 overwrite False
+INFO:root:Checking weight: 2021-05-16 overwrite False
+INFO:root:Checking weight: 2021-05-17 overwrite False
+INFO:root:Checking weight: 2021-05-18 overwrite False
+INFO:root:Checking weight: 2021-05-19 overwrite False
+INFO:root:Checking weight: 2021-05-20 overwrite False
+INFO:root:Checking weight: 2021-05-21 overwrite False
+INFO:root:Checking weight: 2021-05-22 overwrite False
+INFO:root:Checking weight: 2021-05-23 overwrite False

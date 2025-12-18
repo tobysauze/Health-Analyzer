@@ -1,0 +1,19 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      # Persist DB + sessions under /data
+      DB_PATH: /data/health_data.db
+      SESSION_DB: /data/sessions.sqlite
+      # Set this to a long random string in production
+      SESSION_SECRET: ${SESSION_SECRET:-change-me}
+      # Optional: lock CORS to your domain(s), comma-separated
+      # CORS_ORIGIN: https://your-domain.com
+    volumes:
+      - ./data:/data
+      - ./uploads:/app/uploads
+
