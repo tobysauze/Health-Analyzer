@@ -53,35 +53,44 @@ body {
     gap: 15px;
 }
 
-/* Floating sidebar toggle pill */
-#sidebarToggleBtn {
+/* Floating sidebar toggle (only visible when collapsed) */
+#sidebarToggleBtnFloating {
     position: fixed;
-    top: 88px; /* just under main header */
+    top: 88px;
     left: 18px;
     z-index: 1100;
     border-radius: 999px;
-    padding: 8px 10px !important;
+    padding: 10px 12px !important;
     background: #ffffff;
     box-shadow: 0 6px 18px rgba(15, 23, 42, 0.22);
     color: #4b5563;
+    border: none;
+    cursor: pointer;
+    display: none; /* Hidden by default when sidebar is open */
 }
 
-#sidebarToggleBtn i {
-    margin-right: 0;
-}
-
-#sidebarToggleBtn:hover {
+#sidebarToggleBtnFloating:hover {
     background: #f3f4f6;
 }
 
-/* When sidebar is expanded, nudge the toggle so it visually sits on its edge */
-body:not(.sidebar-collapsed) #sidebarToggleBtn {
-    left: 230px; /* ~sidebar width + padding */
+/* Show floating button only when sidebar is collapsed */
+body.sidebar-collapsed #sidebarToggleBtnFloating {
+    display: block;
 }
 
-/* When collapsed, keep it near the viewport edge */
-body.sidebar-collapsed #sidebarToggleBtn {
-    left: 18px;
+/* Hide the in-menu toggle when collapsed */
+body.sidebar-collapsed .sidebar-collapse-btn {
+    display: none;
+}
+
+/* Style the in-menu collapse button */
+.sidebar-collapse-btn {
+    border-bottom: 1px solid rgba(102, 126, 234, 0.15) !important;
+    margin-bottom: 8px !important;
+}
+
+.sidebar-collapse-btn i {
+    transition: transform 0.3s ease;
 }
 
 .auth-user-badge {
@@ -194,20 +203,48 @@ body.sidebar-collapsed #sidebarToggleBtn {
 }
 
 .tab-navigation {
+    position: fixed;
+    top: 100px; /* Below header */
+    left: 20px;
+    bottom: 20px;
     display: flex;
     flex-direction: column;
     background: rgba(255, 255, 255, 0.96);
     border-radius: 18px;
     padding: 10px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    min-width: 220px;
-    max-width: 260px;
-    min-height: calc(100vh - 140px);
-    align-self: stretch;
+    width: 240px;
+    z-index: 100;
+    overflow-y: hidden; /* Hidden by default */
+    overflow-x: hidden;
+}
+
+/* Show scrollbar when hovering over the sidebar */
+.tab-navigation:hover {
+    overflow-y: auto;
+}
+
+/* Custom scrollbar for sidebar */
+.tab-navigation::-webkit-scrollbar {
+    width: 6px;
+}
+
+.tab-navigation::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.tab-navigation::-webkit-scrollbar-thumb {
+    background: rgba(102, 126, 234, 0.3);
+    border-radius: 3px;
+}
+
+.tab-navigation::-webkit-scrollbar-thumb:hover {
+    background: rgba(102, 126, 234, 0.5);
 }
 
 .app-main-content {
     flex: 1;
+    margin-left: 270px; /* Offset for fixed sidebar */
 }
 
 .sidebar-header {
@@ -252,6 +289,7 @@ body.sidebar-collapsed .tab-navigation {
 }
 
 body.sidebar-collapsed .app-main-content {
+    margin-left: 0;
     width: 100%;
 }
 
@@ -261,14 +299,29 @@ body.sidebar-collapsed .app-main-content {
     }
 
     .tab-navigation {
+        position: relative;
+        top: auto;
+        left: auto;
+        bottom: auto;
+        width: 100%;
         flex-direction: row;
         overflow-x: auto;
+        overflow-y: hidden;
         min-width: auto;
         max-width: none;
     }
 
+    .tab-navigation:hover {
+        overflow-y: hidden;
+        overflow-x: auto;
+    }
+
     .sidebar-header {
         display: none;
+    }
+
+    .sidebar-collapse-btn {
+        display: none !important;
     }
 
     .tab-btn {
@@ -277,7 +330,12 @@ body.sidebar-collapsed .app-main-content {
     }
 
     .app-main-content {
+        margin-left: 0;
         width: 100%;
+    }
+
+    #sidebarToggleBtnFloating {
+        display: none !important;
     }
 }
 

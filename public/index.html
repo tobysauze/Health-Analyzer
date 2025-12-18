@@ -9,7 +9,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <button type="button" class="btn btn-secondary" id="sidebarToggleBtn" style="padding:10px 12px;">
+    <!-- Floating toggle for collapsed state -->
+    <button type="button" class="btn btn-secondary" id="sidebarToggleBtnFloating">
         <i class="fas fa-bars"></i>
     </button>
     <div class="container">
@@ -77,6 +78,11 @@
         <div class="app-main-layout">
             <!-- Navigation Sidebar -->
             <nav class="tab-navigation">
+                <!-- Collapse toggle at top of menu -->
+                <button type="button" class="tab-btn sidebar-collapse-btn" id="sidebarToggleBtnInMenu">
+                    <i class="fas fa-angles-left"></i>
+                    <span class="tab-label">Collapse Menu</span>
+                </button>
                 <button class="tab-btn active" data-tab="dashboard">
                     <i class="fas fa-chart-line"></i>
                     <span class="tab-label">Dashboard</span>

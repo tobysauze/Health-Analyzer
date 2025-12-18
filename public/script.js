@@ -146,11 +146,19 @@ function setupEventListeners() {
         openCalorieGoalModal().catch(() => {});
     });
 
-    const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
-    if (sidebarToggleBtn) {
-        sidebarToggleBtn.addEventListener('click', () => {
-            document.body.classList.toggle('sidebar-collapsed');
-        });
+    // Sidebar toggle buttons (floating and in-menu)
+    const sidebarToggleBtnFloating = document.getElementById('sidebarToggleBtnFloating');
+    const sidebarToggleBtnInMenu = document.getElementById('sidebarToggleBtnInMenu');
+    
+    const toggleSidebar = () => {
+        document.body.classList.toggle('sidebar-collapsed');
+    };
+    
+    if (sidebarToggleBtnFloating) {
+        sidebarToggleBtnFloating.addEventListener('click', toggleSidebar);
+    }
+    if (sidebarToggleBtnInMenu) {
+        sidebarToggleBtnInMenu.addEventListener('click', toggleSidebar);
     }
     document.getElementById('strengthForm').addEventListener('submit', handleStrengthSubmit);
     document.getElementById('addSetBtn').addEventListener('click', () => addSetRow());
