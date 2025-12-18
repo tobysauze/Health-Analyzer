@@ -78,7 +78,9 @@ if (!sessionSecret) {
   }
 }
 
-const USE_PG = !!process.env.DATABASE_URL;
+// We consider Postgres/Supabase "on" if either DATABASE_URL or PGHOST is defined.
+// Prefer the discrete PG* vars when available to avoid URL parsing issues.
+const USE_PG = !!(process.env.PGHOST || process.env.DATABASE_URL);
 
 const sessionStore = USE_PG
   ? new PgSession({
@@ -263,11 +265,23 @@ try { fs.mkdirSync(path.join(process.cwd(), 'uploads', 'tmp'), { recursive: true
 try { fs.mkdirSync(path.join(process.cwd(), 'uploads', 'photos'), { recursive: true }); } catch {}
 
 if (USE_PG) {
-  pgPool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
-  });
-  console.log('Using Supabase/Postgres via DATABASE_URL');
+  if (process.env.PGHOST) {
+    pgPool = new Pool({
+      host: process.env.PGHOST,
+      port: process.env.PGPORT ? Number(process.env.PGPORT) : 5432,
+      database: process.env.PGDATABASE || 'postgres',
+      user: process.env.PGUSER || 'postgres',
+      password: process.env.PGPASSWORD,
+      ssl: { rejectUnauthorized: false }
+    });
+    console.log('Using Supabase/Postgres via discrete PG* environment variables');
+  } else {
+    pgPool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false }
+    });
+    console.log('Using Supabase/Postgres via DATABASE_URL');
+  }
   // In Postgres mode we assume the schema already exists in the remote DB.
   bootstrap().catch((e) => {
     console.error('Fatal bootstrap error (Postgres mode):', e.message);
