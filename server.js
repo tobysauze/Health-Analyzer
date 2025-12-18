@@ -5599,6 +5599,35 @@ async function startInteractiveGarminSync(socket, { days = 30 }) {
     socket.emit('garmin:log', '[WARN] Autosync is disabled in env.local, but proceeding with manual sync request...\n');
   }
 
+  // Ensure GarminDB config exists to prevent "No such file" error
+  const homedir = require('os').homedir();
+  const configDir = path.join(homedir, '.GarminDb');
+  const configFile = path.join(configDir, 'GarminConnectConfig.json');
+
+  try {
+    if (!fs.existsSync(configDir)) {
+      fs.mkdirSync(configDir, { recursive: true });
+      socket.emit('garmin:log', `[INFO] Created missing config directory: ${configDir}\n`);
+    }
+    if (!fs.existsSync(configFile)) {
+      // Minimal valid config to satisfy the tool's startup check.
+      // The credentials will be provided interactively via the CLI prompts.
+      const defaultConfig = {
+        "credentials": {
+          "username": "",
+          "password": ""
+        },
+        "data": {
+          "download_days": 30
+        }
+      };
+      fs.writeFileSync(configFile, JSON.stringify(defaultConfig, null, 2));
+      socket.emit('garmin:log', `[INFO] Created default config file at: ${configFile}\n`);
+    }
+  } catch (err) {
+    socket.emit('garmin:log', `[WARN] Failed to setup config file: ${err.message}\n`);
+  }
+
   const cli = process.env.GARMINDB_CLI || 'garmindb_cli.py';
   const cliArgs = [cli, '--all', '--download', '--import', '--analyze', '--latest'];
 
