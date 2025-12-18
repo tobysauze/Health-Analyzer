@@ -5632,7 +5632,7 @@ async function startInteractiveGarminSync(socket, { days = 30 }) {
   const cliArgs = [cli, '--all', '--download', '--import', '--analyze', '--latest'];
 
   // Use the wrapper script to handle interactive auth via garth
-  const wrapperScript = 'garmin_auth_wrapper.py';
+  const wrapperScript = path.join(__dirname, 'garmin_auth_wrapper.py');
 
   // Arguments for the wrapper: [wrapperScript, ...originalCliArgs]
   // The wrapper will internally call the CLI with these args after auth.

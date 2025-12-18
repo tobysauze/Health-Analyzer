@@ -4,7 +4,7 @@ WORKDIR /app
 
 # sqlite3 native module may need build tools depending on platform
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3 python3-pip make g++ \
+  python3 python3-pip make g++ \
   && rm -rf /var/lib/apt/lists/*
 
 # Install GarminDB for data syncing
@@ -19,6 +19,7 @@ COPY public ./public
 COPY populate-sample-data.js ./populate-sample-data.js
 COPY sample-data.js ./sample-data.js
 COPY garmin-parser.js ./garmin-parser.js
+COPY garmin_auth_wrapper.py ./garmin_auth_wrapper.py
 
 # Ensure runtime directories exist (volumes may overwrite, but this helps first boot)
 RUN mkdir -p /app/uploads/tmp /app/uploads/photos
