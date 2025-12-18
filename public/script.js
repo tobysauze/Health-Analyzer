@@ -9,6 +9,7 @@ let currentData = {
     supplements: [],
     medications: []
 };
+let socket = null;
 
 // Food packaging analysis: allow file upload + paste/drag images
 let foodPackagingExtraFiles = [];
@@ -5428,4 +5429,74 @@ function showNotification(message, type = 'info') {
 
 // Make toggleCard function globally available
 window.toggleCard = toggleCard;
+
+// Interactive Garmin Sync
+function startGarminSync() {
+    if (!socket) socket = io(); // Connect if not connected
+
+    // Show Modal with Terminal
+    const content = `
+        <div style="display:flex; flex-direction:column; gap:10px; height: 400px;">
+            <div id="garminTerminal" style="flex:1; background:#1e1e1e; color:#0f0; font-family:monospace; padding:10px; border-radius:4px; overflow-y:auto; font-size:12px; white-space:pre-wrap;">Initializing Sync...</div>
+            <div id="garminInputContainer" style="display:none; gap:10px; align-items:center; background:#f3f4f6; padding:10px; border-radius:8px;">
+                <label id="garminInputLabel" style="font-weight:bold; font-size:14px;">Input:</label>
+                <input type="text" id="garminInputField" class="routine-text-input" style="flex:1;" onkeydown="if(event.key==='Enter') submitGarminInput()">
+                <button class="btn btn-primary" onclick="submitGarminInput()">Submit</button>
+            </div>
+        </div>
+    `;
+    showModal('Garmin Sync', content);
+
+    const term = document.getElementById('garminTerminal');
+    const inputCont = document.getElementById('garminInputContainer');
+    const inputField = document.getElementById('garminInputField');
+    const inputLabel = document.getElementById('garminInputLabel');
+
+    // Reset listeners to avoid duplicates
+    socket.off('garmin:log');
+    socket.off('garmin:prompt');
+    socket.off('garmin:done');
+    socket.off('garmin:error');
+
+    // Start Sync
+    socket.emit('garmin:start-sync', { userId: 1, days: 30 }); // passing dummy userID, handled by server session ideally
+
+    socket.on('garmin:log', (msg) => {
+        term.textContent += msg;
+        term.scrollTop = term.scrollHeight;
+    });
+
+    socket.on('garmin:prompt', ({ field, label, type }) => {
+        inputCont.style.display = 'flex';
+        inputLabel.textContent = label + ':';
+        inputField.type = type || 'text';
+        inputField.value = '';
+        inputField.focus();
+        term.textContent += `\n>> Waiting for ${label}...\n`;
+        term.scrollTop = term.scrollHeight;
+    });
+
+    socket.on('garmin:error', (msg) => {
+        term.textContent += `\n[ERROR] ${msg}\n`;
+        term.style.color = '#ef4444';
+    });
+
+    socket.on('garmin:done', ({ code }) => {
+        term.textContent += `\n[Process Finished with exit code ${code}]`;
+        inputCont.style.display = 'none';
+        if (code === 0) {
+            refreshFitnessCharts();
+            loadRecentWorkouts();
+        }
+    });
+
+    window.submitGarminInput = function () {
+        const val = inputField.value;
+        if (!val) return;
+        socket.emit('garmin:input', { value: val });
+        inputField.value = '';
+        inputCont.style.display = 'none'; // hide until next prompt
+    };
+}
+window.startGarminSync = startGarminSync;
 

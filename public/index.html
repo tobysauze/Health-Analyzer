@@ -1410,7 +1410,14 @@
                         <div class="fitness-section">
                             <div style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; margin-bottom: 10px;"
                                 onclick="toggleCard('fitnessRecentCard')">
-                                <h3><i class="fas fa-list"></i> Recent Workouts</h3>
+                                <div style="display:flex; align-items:center; gap: 10px;">
+                                    <h3><i class="fas fa-list"></i> Recent Workouts</h3>
+                                    <button id="btnGarminSync" class="btn btn-secondary"
+                                        style="font-size:0.7em; padding: 4px 10px;"
+                                        onclick="event.stopPropagation(); startGarminSync()">
+                                        <i class="fas fa-sync"></i> Sync Garmin
+                                    </button>
+                                </div>
                                 <span id="fitnessRecentToggle" class="card-toggle"
                                     style="font-size: 1.2rem; color: #4b5563;">▼</span>
                             </div>
@@ -1892,6 +1899,8 @@
         </div>
     </div>
 
+    <!-- Socket.IO -->
+    <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>
 </body>
 

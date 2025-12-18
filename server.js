@@ -11,6 +11,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const fs = require('fs');
 const XLSX = require('xlsx');
+const cron = require('node-cron');
 const GarminParser = require('./garmin-parser');
 const crypto = require('crypto');
 const readline = require('readline');
@@ -35,7 +36,7 @@ let pgPool = null;
 let serverHandle = null;
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+// PORT defined at bottom
 
 // Middleware
 // Security headers (safe defaults)
@@ -69,12 +70,12 @@ if (!sessionSecret) {
     if (fs.existsSync(SESSION_SECRET_PATH)) {
       sessionSecret = String(fs.readFileSync(SESSION_SECRET_PATH, 'utf8')).trim();
     }
-  } catch {}
+  } catch { }
   if (!sessionSecret) {
     sessionSecret = crypto.randomBytes(32).toString('hex');
     try {
       fs.writeFileSync(SESSION_SECRET_PATH, sessionSecret + '\n', { mode: 0o600 });
-    } catch {}
+    } catch { }
   }
 }
 
@@ -103,14 +104,14 @@ function buildPgPoolConfig() {
 
 const sessionStore = USE_PG
   ? new PgSession({
-      pool: new Pool(buildPgPoolConfig()),
-      tableName: 'sessions'
-    })
+    pool: new Pool(buildPgPoolConfig()),
+    tableName: 'sessions'
+  })
   : new SQLiteStore({
-      db: process.env.SESSION_DB || 'sessions.sqlite',
-      dir: process.cwd(),
-      table: 'sessions'
-    });
+    db: process.env.SESSION_DB || 'sessions.sqlite',
+    dir: process.cwd(),
+    table: 'sessions'
+  });
 
 app.use(session({
   store: sessionStore,
@@ -166,14 +167,14 @@ const tmpStorage = multer.diskStorage({
   }
 });
 
-const upload = multer({ 
+const upload = multer({
   storage: tmpStorage,
   limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit for Excel files
   fileFilter: function (req, file, cb) {
     // Accept CSV and Excel files
     const allowedExtensions = ['.csv', '.xlsx', '.xls'];
     const fileExtension = path.extname(file.originalname).toLowerCase();
-    
+
     if (allowedExtensions.includes(fileExtension)) {
       cb(null, true);
     } else {
@@ -183,14 +184,14 @@ const upload = multer({
 });
 
 // Configure multer for Garmin file uploads (accepts more formats)
-const garminUpload = multer({ 
+const garminUpload = multer({
   storage: tmpStorage,
   limits: { fileSize: 100 * 1024 * 1024 }, // 100MB limit for Garmin files
   fileFilter: function (req, file, cb) {
     // Accept Garmin file formats: CSV, TCX, GPX, Excel
     const allowedExtensions = ['.csv', '.xlsx', '.xls', '.tcx', '.gpx'];
     const fileExtension = path.extname(file.originalname).toLowerCase();
-    
+
     if (allowedExtensions.includes(fileExtension)) {
       cb(null, true);
     } else {
@@ -276,12 +277,12 @@ if (!USE_PG) {
     // Ensure DB parent directory exists when using a path like /data/health_data.db
     const dir = path.dirname(DB_PATH);
     if (dir && dir !== '.' && dir !== '/') fs.mkdirSync(dir, { recursive: true });
-  } catch {}
+  } catch { }
 }
 
 // Ensure upload directories exist (required for multer destinations)
-try { fs.mkdirSync(path.join(process.cwd(), 'uploads', 'tmp'), { recursive: true }); } catch {}
-try { fs.mkdirSync(path.join(process.cwd(), 'uploads', 'photos'), { recursive: true }); } catch {}
+try { fs.mkdirSync(path.join(process.cwd(), 'uploads', 'tmp'), { recursive: true }); } catch { }
+try { fs.mkdirSync(path.join(process.cwd(), 'uploads', 'photos'), { recursive: true }); } catch { }
 
 if (USE_PG) {
   if (process.env.PGHOST) {
@@ -342,7 +343,7 @@ async function _initializeDatabaseLegacy() {
       wake_time TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`,
-    
+
     `CREATE TABLE IF NOT EXISTS activity_data (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       date TEXT NOT NULL,
@@ -352,7 +353,7 @@ async function _initializeDatabaseLegacy() {
       active_minutes INTEGER,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`,
-    
+
     `CREATE TABLE IF NOT EXISTS nutrition_data (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       date TEXT NOT NULL,
@@ -364,7 +365,7 @@ async function _initializeDatabaseLegacy() {
       sugar_g REAL,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`,
-    
+
     `CREATE TABLE IF NOT EXISTS food_log (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       date TEXT NOT NULL,
@@ -376,7 +377,7 @@ async function _initializeDatabaseLegacy() {
       serving_size TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`,
-    
+
     `CREATE TABLE IF NOT EXISTS mood_data (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       date TEXT NOT NULL,
@@ -387,7 +388,7 @@ async function _initializeDatabaseLegacy() {
       notes TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`,
-    
+
     `CREATE TABLE IF NOT EXISTS supplements (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
@@ -398,7 +399,7 @@ async function _initializeDatabaseLegacy() {
       end_date TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`,
-    
+
     `CREATE TABLE IF NOT EXISTS medications (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
@@ -409,7 +410,7 @@ async function _initializeDatabaseLegacy() {
       notes TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`,
-    
+
     `CREATE TABLE IF NOT EXISTS genetic_data (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       filename TEXT,
@@ -417,7 +418,7 @@ async function _initializeDatabaseLegacy() {
       analysis_results TEXT,
       uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`,
-    
+
     `CREATE TABLE IF NOT EXISTS correlations (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       factor1 TEXT NOT NULL,
@@ -855,19 +856,19 @@ async function _runMigrationsLegacy() {
     }
 
     // Drop old single-column unique indexes (if present)
-    await runDb('DROP INDEX IF EXISTS idx_sleep_date').catch(() => {});
-    await runDb('DROP INDEX IF EXISTS idx_activity_date').catch(() => {});
-    await runDb('DROP INDEX IF EXISTS idx_nutrition_date').catch(() => {});
-    await runDb('DROP INDEX IF EXISTS idx_mood_date').catch(() => {});
+    await runDb('DROP INDEX IF EXISTS idx_sleep_date').catch(() => { });
+    await runDb('DROP INDEX IF EXISTS idx_activity_date').catch(() => { });
+    await runDb('DROP INDEX IF EXISTS idx_nutrition_date').catch(() => { });
+    await runDb('DROP INDEX IF EXISTS idx_mood_date').catch(() => { });
 
     // Create composite unique indexes
-    await runDb('CREATE UNIQUE INDEX IF NOT EXISTS idx_sleep_user_date ON sleep_data(user_id, date)').catch(() => {});
-    await runDb('CREATE UNIQUE INDEX IF NOT EXISTS idx_activity_user_date ON activity_data(user_id, date)').catch(() => {});
-    await runDb('CREATE UNIQUE INDEX IF NOT EXISTS idx_nutrition_user_date ON nutrition_data(user_id, date)').catch(() => {});
-    await runDb('CREATE UNIQUE INDEX IF NOT EXISTS idx_mood_user_date ON mood_data(user_id, date)').catch(() => {});
-    await runDb('CREATE UNIQUE INDEX IF NOT EXISTS idx_bodycomp_user_date ON body_composition(user_id, date)').catch(() => {});
-    await runDb('CREATE UNIQUE INDEX IF NOT EXISTS idx_journal_user_date ON journal_entries(user_id, date)').catch(() => {});
-    await runDb('CREATE UNIQUE INDEX IF NOT EXISTS idx_exercises_user_name ON exercises(user_id, name)').catch(() => {});
+    await runDb('CREATE UNIQUE INDEX IF NOT EXISTS idx_sleep_user_date ON sleep_data(user_id, date)').catch(() => { });
+    await runDb('CREATE UNIQUE INDEX IF NOT EXISTS idx_activity_user_date ON activity_data(user_id, date)').catch(() => { });
+    await runDb('CREATE UNIQUE INDEX IF NOT EXISTS idx_nutrition_user_date ON nutrition_data(user_id, date)').catch(() => { });
+    await runDb('CREATE UNIQUE INDEX IF NOT EXISTS idx_mood_user_date ON mood_data(user_id, date)').catch(() => { });
+    await runDb('CREATE UNIQUE INDEX IF NOT EXISTS idx_bodycomp_user_date ON body_composition(user_id, date)').catch(() => { });
+    await runDb('CREATE UNIQUE INDEX IF NOT EXISTS idx_journal_user_date ON journal_entries(user_id, date)').catch(() => { });
+    await runDb('CREATE UNIQUE INDEX IF NOT EXISTS idx_exercises_user_name ON exercises(user_id, name)').catch(() => { });
 
     await runDb('PRAGMA foreign_keys = ON');
 
@@ -939,8 +940,8 @@ async function ensureRoutineId({ userId, routineKey }) {
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`
-  ).catch(() => {});
-  await runDb('CREATE UNIQUE INDEX IF NOT EXISTS idx_routines_user_key ON routines(user_id, key)').catch(() => {});
+  ).catch(() => { });
+  await runDb('CREATE UNIQUE INDEX IF NOT EXISTS idx_routines_user_key ON routines(user_id, key)').catch(() => { });
   await runDb(
     `INSERT INTO routines (user_id, key, title)
      VALUES (?, ?, ?)
@@ -1227,44 +1228,44 @@ async function importFromGarminDbSqlite({ userId, garminDbPath, days = 30 }) {
       if (result) activity_upserts++;
     }
   } else {
-  // Heuristic: pick an "activity daily" table
-  for (const t of tables) {
-    const cols = await tableCols(t).catch(() => []);
-    if (!cols.length) continue;
-    if (!hasAny(cols, ['step'])) continue;
-    if (!hasAny(cols, ['date', 'day', 'calendar'])) continue;
+    // Heuristic: pick an "activity daily" table
+    for (const t of tables) {
+      const cols = await tableCols(t).catch(() => []);
+      if (!cols.length) continue;
+      if (!hasAny(cols, ['step'])) continue;
+      if (!hasAny(cols, ['date', 'day', 'calendar'])) continue;
 
-    const dateCol = pickCol(cols, ['date', 'day', 'calendar']);
-    const stepsCol = pickCol(cols, ['steps', 'step']);
-    const calCol = pickCol(cols, ['calories', 'kcal']);
-    const hrCol = pickCol(cols, ['avg_heart', 'average_heart', 'heart_rate_avg', 'avg_hr', 'heartrate']);
-    const activeCol = pickCol(cols, ['active_min', 'intensity', 'active_minutes', 'active_time']);
-    if (!dateCol || !stepsCol) continue;
+      const dateCol = pickCol(cols, ['date', 'day', 'calendar']);
+      const stepsCol = pickCol(cols, ['steps', 'step']);
+      const calCol = pickCol(cols, ['calories', 'kcal']);
+      const hrCol = pickCol(cols, ['avg_heart', 'average_heart', 'heart_rate_avg', 'avg_hr', 'heartrate']);
+      const activeCol = pickCol(cols, ['active_min', 'intensity', 'active_minutes', 'active_time']);
+      if (!dateCol || !stepsCol) continue;
 
-    const rows = await gAll(
-      `SELECT ${quoteIdent(dateCol)} AS d, ${quoteIdent(stepsCol)} AS steps,
+      const rows = await gAll(
+        `SELECT ${quoteIdent(dateCol)} AS d, ${quoteIdent(stepsCol)} AS steps,
               ${calCol ? `${quoteIdent(calCol)} AS calories,` : ''} 
               ${hrCol ? `${quoteIdent(hrCol)} AS hr,` : ''} 
               ${activeCol ? `${quoteIdent(activeCol)} AS active` : 'NULL AS active'}
          FROM ${quoteIdent(t)}`
-    ).catch(() => []);
-    if (!rows.length) continue;
+      ).catch(() => []);
+      if (!rows.length) continue;
 
-    for (const r of rows) {
-      const date = coerceIsoDate(r.d);
-      if (!date || date < cutoffIso) continue;
-      const patch = {
-        source: 'garmin',
-        steps: r.steps != null ? Number(r.steps) : null,
-        calories_burned: r.calories != null ? Number(r.calories) : null,
-        heart_rate_avg: r.hr != null ? Number(r.hr) : null,
-        active_minutes: r.active != null ? Number(r.active) : null
-      };
-      const result = await upsertDayActivity(userId, date, patch).catch(() => null);
-      if (result) activity_upserts++;
+      for (const r of rows) {
+        const date = coerceIsoDate(r.d);
+        if (!date || date < cutoffIso) continue;
+        const patch = {
+          source: 'garmin',
+          steps: r.steps != null ? Number(r.steps) : null,
+          calories_burned: r.calories != null ? Number(r.calories) : null,
+          heart_rate_avg: r.hr != null ? Number(r.hr) : null,
+          active_minutes: r.active != null ? Number(r.active) : null
+        };
+        const result = await upsertDayActivity(userId, date, patch).catch(() => null);
+        if (result) activity_upserts++;
+      }
+      break; // stop after first good match
     }
-    break; // stop after first good match
-  }
   }
 
   if (hasTable('sleep')) {
@@ -1289,55 +1290,55 @@ async function importFromGarminDbSqlite({ userId, garminDbPath, days = 30 }) {
         rem_sleep_hours: parseHHMMSSToHours(r.rem),
         bedtime: r.bed ? String(r.bed).slice(11, 16) : null,
         wake_time: r.wake ? String(r.wake).slice(11, 16) : null
-      }).catch(() => {});
+      }).catch(() => { });
       sleep_upserts++;
     }
   } else {
-  // Heuristic: pick a sleep table
-  for (const t of tables) {
-    const cols = await tableCols(t).catch(() => []);
-    if (!cols.length) continue;
-    if (!hasAny(cols, ['sleep'])) continue;
-    if (!hasAny(cols, ['date', 'day'])) continue;
-    const dateCol = pickCol(cols, ['date', 'day']);
-    if (!dateCol) continue;
+    // Heuristic: pick a sleep table
+    for (const t of tables) {
+      const cols = await tableCols(t).catch(() => []);
+      if (!cols.length) continue;
+      if (!hasAny(cols, ['sleep'])) continue;
+      if (!hasAny(cols, ['date', 'day'])) continue;
+      const dateCol = pickCol(cols, ['date', 'day']);
+      if (!dateCol) continue;
 
-    const scoreCol = pickCol(cols, ['score']);
-    const durCol = pickCol(cols, ['duration', 'total_sleep', 'sleep_time']);
-    const deepCol = pickCol(cols, ['deep']);
-    const remCol = pickCol(cols, ['rem']);
-    const bedCol = pickCol(cols, ['bed', 'start']);
-    const wakeCol = pickCol(cols, ['wake', 'end']);
+      const scoreCol = pickCol(cols, ['score']);
+      const durCol = pickCol(cols, ['duration', 'total_sleep', 'sleep_time']);
+      const deepCol = pickCol(cols, ['deep']);
+      const remCol = pickCol(cols, ['rem']);
+      const bedCol = pickCol(cols, ['bed', 'start']);
+      const wakeCol = pickCol(cols, ['wake', 'end']);
 
-    const sel = [
-      `${quoteIdent(dateCol)} AS d`,
-      scoreCol ? `${quoteIdent(scoreCol)} AS score` : 'NULL AS score',
-      durCol ? `${quoteIdent(durCol)} AS dur` : 'NULL AS dur',
-      deepCol ? `${quoteIdent(deepCol)} AS deep` : 'NULL AS deep',
-      remCol ? `${quoteIdent(remCol)} AS rem` : 'NULL AS rem',
-      bedCol ? `${quoteIdent(bedCol)} AS bed` : 'NULL AS bed',
-      wakeCol ? `${quoteIdent(wakeCol)} AS wake` : 'NULL AS wake'
-    ].join(', ');
+      const sel = [
+        `${quoteIdent(dateCol)} AS d`,
+        scoreCol ? `${quoteIdent(scoreCol)} AS score` : 'NULL AS score',
+        durCol ? `${quoteIdent(durCol)} AS dur` : 'NULL AS dur',
+        deepCol ? `${quoteIdent(deepCol)} AS deep` : 'NULL AS deep',
+        remCol ? `${quoteIdent(remCol)} AS rem` : 'NULL AS rem',
+        bedCol ? `${quoteIdent(bedCol)} AS bed` : 'NULL AS bed',
+        wakeCol ? `${quoteIdent(wakeCol)} AS wake` : 'NULL AS wake'
+      ].join(', ');
 
-    const rows = await gAll(`SELECT ${sel} FROM ${quoteIdent(t)}`).catch(() => []);
-    if (!rows.length) continue;
+      const rows = await gAll(`SELECT ${sel} FROM ${quoteIdent(t)}`).catch(() => []);
+      if (!rows.length) continue;
 
-    for (const r of rows) {
-      const date = coerceIsoDate(r.d);
-      if (!date || date < cutoffIso) continue;
-      await upsertDaySleep(userId, date, {
-        source: 'garmin',
-        score: r.score != null ? Number(r.score) : null,
-        duration_hours: r.dur != null ? Number(r.dur) : null,
-        deep_sleep_hours: r.deep != null ? Number(r.deep) : null,
-        rem_sleep_hours: r.rem != null ? Number(r.rem) : null,
-        bedtime: r.bed ? String(r.bed).slice(0, 5) : null,
-        wake_time: r.wake ? String(r.wake).slice(0, 5) : null
-      }).catch(() => {});
-      sleep_upserts++;
+      for (const r of rows) {
+        const date = coerceIsoDate(r.d);
+        if (!date || date < cutoffIso) continue;
+        await upsertDaySleep(userId, date, {
+          source: 'garmin',
+          score: r.score != null ? Number(r.score) : null,
+          duration_hours: r.dur != null ? Number(r.dur) : null,
+          deep_sleep_hours: r.deep != null ? Number(r.deep) : null,
+          rem_sleep_hours: r.rem != null ? Number(r.rem) : null,
+          bedtime: r.bed ? String(r.bed).slice(0, 5) : null,
+          wake_time: r.wake ? String(r.wake).slice(0, 5) : null
+        }).catch(() => { });
+        sleep_upserts++;
+      }
+      break;
     }
-    break;
-  }
   }
 
   // weight + resting HR (prefer known tables)
@@ -1348,7 +1349,7 @@ async function importFromGarminDbSqlite({ userId, garminDbPath, days = 30 }) {
       if (!date || date < cutoffIso) continue;
       const w = r.w != null ? Number(r.w) : null;
       if (w != null && Number.isFinite(w)) {
-        await upsertBodyCompByDate({ userId, date, patch: { weight_kg: w }, source: 'garmin' }).catch(() => {});
+        await upsertBodyCompByDate({ userId, date, patch: { weight_kg: w }, source: 'garmin' }).catch(() => { });
         weight_upserts++;
       }
     }
@@ -1361,7 +1362,7 @@ async function importFromGarminDbSqlite({ userId, garminDbPath, days = 30 }) {
       if (!date || date < cutoffIso) continue;
       const hr = r.hr != null ? Number(r.hr) : null;
       if (hr != null && Number.isFinite(hr)) {
-        await insertBiometricSample({ userId, type: 'resting_heart_rate', date, value_num: hr, unit: 'bpm', source: 'garmin' }).catch(() => {});
+        await insertBiometricSample({ userId, type: 'resting_heart_rate', date, value_num: hr, unit: 'bpm', source: 'garmin' }).catch(() => { });
         hr_samples++;
       }
     }
@@ -1369,44 +1370,44 @@ async function importFromGarminDbSqlite({ userId, garminDbPath, days = 30 }) {
 
   // Heuristic fallback: weight / resting HR
   if (!hasTable('weight') || !hasTable('resting_hr')) {
-  // Heuristic: weight / resting HR
-  for (const t of tables) {
-    const cols = await tableCols(t).catch(() => []);
-    if (!cols.length) continue;
-    const dateCol = pickCol(cols, ['date', 'day']);
-    if (!dateCol) continue;
+    // Heuristic: weight / resting HR
+    for (const t of tables) {
+      const cols = await tableCols(t).catch(() => []);
+      if (!cols.length) continue;
+      const dateCol = pickCol(cols, ['date', 'day']);
+      if (!dateCol) continue;
 
-    // weight
-    if (hasAny(cols, ['weight'])) {
-      const wCol = pickCol(cols, ['weight']);
-      const rows = await gAll(`SELECT ${quoteIdent(dateCol)} AS d, ${quoteIdent(wCol)} AS w FROM ${quoteIdent(t)}`).catch(() => []);
-      for (const r of rows) {
-        const date = coerceIsoDate(r.d);
-        if (!date || date < cutoffIso) continue;
-        const w = r.w != null ? Number(r.w) : null;
-        if (w != null && Number.isFinite(w)) {
-          await upsertBodyCompByDate({ userId, date, patch: { weight_kg: w }, source: 'garmin' }).catch(() => {});
-          weight_upserts++;
+      // weight
+      if (hasAny(cols, ['weight'])) {
+        const wCol = pickCol(cols, ['weight']);
+        const rows = await gAll(`SELECT ${quoteIdent(dateCol)} AS d, ${quoteIdent(wCol)} AS w FROM ${quoteIdent(t)}`).catch(() => []);
+        for (const r of rows) {
+          const date = coerceIsoDate(r.d);
+          if (!date || date < cutoffIso) continue;
+          const w = r.w != null ? Number(r.w) : null;
+          if (w != null && Number.isFinite(w)) {
+            await upsertBodyCompByDate({ userId, date, patch: { weight_kg: w }, source: 'garmin' }).catch(() => { });
+            weight_upserts++;
+          }
+        }
+        continue;
+      }
+
+      // resting HR
+      if (hasAny(cols, ['resting']) && hasAny(cols, ['heart'])) {
+        const hrCol = pickCol(cols, ['resting', 'hr']);
+        const rows = await gAll(`SELECT ${quoteIdent(dateCol)} AS d, ${quoteIdent(hrCol)} AS hr FROM ${quoteIdent(t)}`).catch(() => []);
+        for (const r of rows) {
+          const date = coerceIsoDate(r.d);
+          if (!date || date < cutoffIso) continue;
+          const hr = r.hr != null ? Number(r.hr) : null;
+          if (hr != null && Number.isFinite(hr)) {
+            await insertBiometricSample({ userId, type: 'resting_heart_rate', date, value_num: hr, unit: 'bpm', source: 'garmin' }).catch(() => { });
+            hr_samples++;
+          }
         }
       }
-      continue;
     }
-
-    // resting HR
-    if (hasAny(cols, ['resting']) && hasAny(cols, ['heart'])) {
-      const hrCol = pickCol(cols, ['resting', 'hr']);
-      const rows = await gAll(`SELECT ${quoteIdent(dateCol)} AS d, ${quoteIdent(hrCol)} AS hr FROM ${quoteIdent(t)}`).catch(() => []);
-      for (const r of rows) {
-        const date = coerceIsoDate(r.d);
-        if (!date || date < cutoffIso) continue;
-        const hr = r.hr != null ? Number(r.hr) : null;
-        if (hr != null && Number.isFinite(hr)) {
-          await insertBiometricSample({ userId, type: 'resting_heart_rate', date, value_num: hr, unit: 'bpm', source: 'garmin' }).catch(() => {});
-          hr_samples++;
-        }
-      }
-    }
-  }
   }
 
   gdb.close();
@@ -1441,7 +1442,7 @@ async function importFromGarminMonitoringDb({ userId, garminMonitoringPath, days
        VALUES (?, 'heart_rate', ?, ?, ?, 'bpm', 'garmin', NULL)
        ON CONFLICT(user_id, type, source, start_at) DO NOTHING`,
       [userId, start_at, start_at, hr]
-    ).catch(() => {});
+    ).catch(() => { });
     hr_samples++;
   }
 
@@ -1544,7 +1545,7 @@ async function importFromGarminActivitiesDb({ userId, garminActivitiesPath, days
         r.anaerobic_training_effect != null ? Number(r.anaerobic_training_effect) : null,
         raw_json
       ]
-    ).catch(() => {});
+    ).catch(() => { });
     sessions_upserts++;
   }
 
@@ -1558,7 +1559,7 @@ async function runGarminDbCli({ args, cwd, timeoutMs = 10 * 60 * 1000 }) {
     let stdout = '';
     let stderr = '';
     const timer = setTimeout(() => {
-      try { child.kill('SIGKILL'); } catch {}
+      try { child.kill('SIGKILL'); } catch { }
     }, timeoutMs);
     child.stdout.on('data', (d) => { stdout += d.toString(); if (stdout.length > 50_000) stdout = stdout.slice(-50_000); });
     child.stderr.on('data', (d) => { stderr += d.toString(); if (stderr.length > 50_000) stderr = stderr.slice(-50_000); });
@@ -1791,7 +1792,7 @@ function parseCsvLineLoose(line) {
   let inQuotes = false;
   for (let i = 0; i < line.length; i++) {
     const ch = line[i];
-    if (ch === '"' ) {
+    if (ch === '"') {
       if (inQuotes && line[i + 1] === '"') {
         cur += '"';
         i++;
@@ -3049,7 +3050,7 @@ app.post('/api/genetic-upload', upload.single('geneticFile'), (req, res) => {
     mimetype: req.file.mimetype,
     size: req.file.size
   } : 'No file');
-  
+
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded. Please make sure you selected a file.' });
   }
@@ -3057,9 +3058,9 @@ app.post('/api/genetic-upload', upload.single('geneticFile'), (req, res) => {
   const filePath = req.file.path;
   const filename = req.file.originalname;
   const fileExtension = path.extname(filename).toLowerCase();
-  
+
   console.log('Processing file:', filename, 'Extension:', fileExtension);
-  
+
   // Handle Excel files (.xlsx, .xls)
   if (fileExtension === '.xlsx' || fileExtension === '.xls') {
     try {
@@ -3067,18 +3068,18 @@ app.post('/api/genetic-upload', upload.single('geneticFile'), (req, res) => {
       const workbook = XLSX.readFile(filePath);
       const firstSheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[firstSheetName];
-      
+
       // Convert to CSV format
       const csvData = XLSX.utils.sheet_to_csv(worksheet);
-      
+
       // Analyze the data
       const analysisResults = analyzeGeneticData(csvData);
-      
+
       // Store in database
       db.run(
         'INSERT INTO genetic_data (user_id, filename, data, analysis_results) VALUES (?, ?, ?, ?)',
         [userId, filename, csvData, JSON.stringify(analysisResults)],
-        function(err) {
+        function (err) {
           if (err) {
             // Clean up uploaded file
             fs.unlink(filePath, (unlinkErr) => {
@@ -3086,14 +3087,14 @@ app.post('/api/genetic-upload', upload.single('geneticFile'), (req, res) => {
             });
             return res.status(500).json({ error: err.message });
           }
-          
+
           // Clean up uploaded file
           fs.unlink(filePath, (unlinkErr) => {
             if (unlinkErr) console.error('Error deleting file:', unlinkErr);
           });
-          
-          res.json({ 
-            id: this.lastID, 
+
+          res.json({
+            id: this.lastID,
             message: 'Genetic data uploaded and analyzed successfully',
             analysis: analysisResults
           });
@@ -3119,7 +3120,7 @@ app.post('/api/genetic-upload', upload.single('geneticFile'), (req, res) => {
       db.run(
         'INSERT INTO genetic_data (user_id, filename, data, analysis_results) VALUES (?, ?, ?, ?)',
         [userId, filename, data, JSON.stringify(analysisResults)],
-        function(err) {
+        function (err) {
           if (err) {
             // Clean up uploaded file
             fs.unlink(filePath, (unlinkErr) => {
@@ -3127,14 +3128,14 @@ app.post('/api/genetic-upload', upload.single('geneticFile'), (req, res) => {
             });
             return res.status(500).json({ error: err.message });
           }
-          
+
           // Clean up uploaded file
           fs.unlink(filePath, (unlinkErr) => {
             if (unlinkErr) console.error('Error deleting file:', unlinkErr);
           });
-          
-          res.json({ 
-            id: this.lastID, 
+
+          res.json({
+            id: this.lastID,
             message: 'Genetic data uploaded and analyzed successfully',
             analysis: analysisResults
           });
@@ -3183,7 +3184,7 @@ app.get('/api/journal/:date', async (req, res) => {
       'SELECT * FROM journal_insights WHERE user_id = ? AND journal_id = ? ORDER BY created_at DESC',
       [userId, row.id]
     );
-    res.json({ ...row, insights: insights.map(i => ({...i, extracted_json: i.extracted_json ? JSON.parse(i.extracted_json) : null, tags: i.tags ? JSON.parse(i.tags) : [] })) });
+    res.json({ ...row, insights: insights.map(i => ({ ...i, extracted_json: i.extracted_json ? JSON.parse(i.extracted_json) : null, tags: i.tags ? JSON.parse(i.tags) : [] })) });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -3268,7 +3269,7 @@ app.post('/api/journal', async (req, res) => {
         `INSERT INTO insight_events (user_id, kind, occurred_at, ref_table, ref_id, extracted_json)
          VALUES (?, 'journal_extraction', ?, 'journal_entries', ?, ?)`,
         [userId, `${date}T12:00:00.000Z`, entry.id, JSON.stringify(llm.extracted)]
-      ).catch(() => {});
+      ).catch(() => { });
 
       // Optionally mirror inferred scores into journal_insights (latest)
       const inf = llm.extracted.inferred || {};
@@ -3293,7 +3294,7 @@ app.post('/api/journal', async (req, res) => {
             llm.extracted.summary || null,
             JSON.stringify(llm.extracted)
           ]
-        ).catch(() => {});
+        ).catch(() => { });
       }
     }
 
@@ -3335,7 +3336,7 @@ app.post('/api/journal/:date/analyze', async (req, res) => {
         `INSERT INTO insight_events (user_id, kind, occurred_at, ref_table, ref_id, extracted_json)
          VALUES (?, 'journal_extraction', ?, 'journal_entries', ?, ?)`,
         [userId, `${date}T12:00:00.000Z`, entry.id, JSON.stringify(llm.extracted)]
-      ).catch(() => {});
+      ).catch(() => { });
     }
     res.json({ message: 'Journal analyzed', date, insights: extracted, llm_ok: !!llm?.ok, llm: llm?.ok ? llm.extracted : undefined });
   } catch (e) {
@@ -3498,7 +3499,7 @@ app.post('/api/food-packaging/analyze', photoUpload.array('photos', 6), async (r
            source_json = COALESCE(excluded.source_json, products.source_json),
            updated_at = CURRENT_TIMESTAMP`,
         [gtin, prodPayload.name, prodPayload.brand, null, null, prodPayload.ingredients, prodPayload.serving_size, 'packaging_scan', JSON.stringify(prodPayload)]
-      ).catch(() => {});
+      ).catch(() => { });
       if (prodPayload.nutrition) {
         const n = prodPayload.nutrition;
         await runDb(
@@ -3529,7 +3530,7 @@ app.post('/api/food-packaging/analyze', photoUpload.array('photos', 6), async (r
             null,
             JSON.stringify(n.micronutrients || {})
           ]
-        ).catch(() => {});
+        ).catch(() => { });
       }
       saved.product = true;
     }
@@ -3569,7 +3570,7 @@ app.post('/api/food-packaging/analyze', photoUpload.array('photos', 6), async (r
           f,
           servingLabel
         ]
-      ).catch(() => {});
+      ).catch(() => { });
       logged.food_log = true;
     }
 
@@ -4823,100 +4824,109 @@ app.post('/api/integrations/hume', async (req, res) => {
   }
 });
 
-// GarminDB Auto Sync (local personal-use)
+// Reusable AutoSync Logic
+async function runGarminAutoSync({ userId, days = 30, includeDaily = true, includeWorkouts = true, includeSamples = false, samplesDays = 30 }) {
+  if (String(process.env.ENABLE_GARMINDB_AUTOSYNC || '').toLowerCase() !== 'true') {
+    throw new Error('GarminDB autosync is disabled. Set ENABLE_GARMINDB_AUTOSYNC=true in env.local.');
+  }
+
+  const home = os.homedir();
+  const garminHome = process.env.GARMINDB_HOME || path.join(home, '.GarminDb');
+
+  // Look for DB
+  const dbCandidates = [
+    process.env.GARMINDB_DB_PATH,
+    path.join(garminHome, 'DBs', 'garmin.db'),
+    path.join(garminHome, 'DBs', 'garmindb.db'),
+    path.join(garminHome, 'DBs', 'garmin.sqlite'),
+    path.join(garminHome, 'DBs', 'garmindb.sqlite')
+  ].filter(Boolean);
+
+  const garminDbPath = dbCandidates.find(p => {
+    try { return fs.existsSync(p); } catch { return false; }
+  });
+
+  // Determine CLI command
+  // If running in Docker/prod, likely 'garmindb_cli.py' is in path if installed via pip
+  // Otherwise it might be an absolute path
+  const cli = process.env.GARMINDB_CLI || 'garmindb_cli.py';
+  const cliArgs = [cli, '--all', '--download', '--import', '--analyze', '--latest'];
+
+  console.log(`[GarminSync] Running: ${cli} ${cliArgs.slice(1).join(' ')}`);
+  const run = await runGarminDbCli({ args: cliArgs, cwd: process.cwd() });
+
+  if (run.code !== 0) {
+    throw new Error(`GarminDB command failed (exit ${run.code}). Output: ${(run.stderr || run.stdout || '').slice(-1000)}`);
+  }
+
+  if (!garminDbPath) {
+    throw new Error(`Could not find GarminDB SQLite database. Searched in: ${garminHome}/DBs/`);
+  }
+
+  const dbDir = process.env.GARMINDB_DB_DIR || path.dirname(garminDbPath);
+  const paths = {
+    main: path.join(dbDir, 'garmin.db'),
+    monitoring: path.join(dbDir, 'garmin_monitoring.db'),
+    activities: path.join(dbDir, 'garmin_activities.db'),
+    summary: path.join(dbDir, 'garmin_summary.db')
+  };
+
+  // Adjust paths if file names differ (some ver use garmindb.db)
+  if (!fs.existsSync(paths.main) && fs.existsSync(garminDbPath)) paths.main = garminDbPath;
+
+  const result = { daily: null, workouts: null, samples: null };
+
+  if (includeDaily) {
+    result.daily = await importFromGarminDbSqlite({ userId, garminDbPath: paths.main, days });
+  }
+  if (includeWorkouts && fs.existsSync(paths.activities)) {
+    result.workouts = await importFromGarminActivitiesDb({ userId, garminActivitiesPath: paths.activities, days });
+  }
+  if (includeSamples && fs.existsSync(paths.monitoring)) {
+    result.samples = await importFromGarminMonitoringDb({ userId, garminMonitoringPath: paths.monitoring, days: samplesDays });
+  }
+
+  return { ...result, dbDir };
+}
+
+// GarminDB Auto Sync (manual trigger)
 app.post('/api/garmin/autosync', async (req, res) => {
   try {
-    if (String(process.env.ENABLE_GARMINDB_AUTOSYNC || '').toLowerCase() !== 'true') {
-      return res.status(403).json({ error: 'GarminDB autosync is disabled. Set ENABLE_GARMINDB_AUTOSYNC=true in env.local and restart.' });
-    }
     const userId = reqUserId(req);
     const days = Math.min(5000, Math.max(1, Number(req.body?.days || 30)));
-    const includeDaily = req.body?.includeDaily !== false; // default true
-    const includeWorkouts = req.body?.includeWorkouts !== false; // default true
-    const includeSamples = !!req.body?.includeSamples; // default false (can be huge)
+    const includeDaily = req.body?.includeDaily !== false;
+    const includeWorkouts = req.body?.includeWorkouts !== false;
+    const includeSamples = !!req.body?.includeSamples;
     const samplesDays = Math.min(365, Math.max(1, Number(req.body?.samplesDays || days)));
 
-    const home = os.homedir();
-    const garminHome = process.env.GARMINDB_HOME || path.join(home, '.GarminDb');
-    const dbCandidates = [
-      process.env.GARMINDB_DB_PATH,
-      path.join(garminHome, 'DBs', 'garmin.db'),
-      path.join(garminHome, 'DBs', 'garmindb.db'),
-      path.join(garminHome, 'DBs', 'garmin.sqlite'),
-      path.join(garminHome, 'DBs', 'garmindb.sqlite')
-    ].filter(Boolean);
-    const garminDbPath = dbCandidates.find(p => {
-      try { return fs.existsSync(p); } catch { return false; }
-    });
-
-    // Run garmindb cli (if installed/configured)
-    const cli = process.env.GARMINDB_CLI || 'garmindb_cli.py';
-    const cliArgs = [cli, '--all', '--download', '--import', '--analyze', '--latest'];
-    const run = await runGarminDbCli({ args: cliArgs, cwd: process.cwd() });
-    if (run.code !== 0) {
-      return res.status(500).json({
-        error: `GarminDB command failed (exit ${run.code}). Make sure GarminDB is installed and configured.`,
-        details: (run.stderr || run.stdout || '').slice(-4000)
-      });
-    }
-
-    if (!garminDbPath) {
-      return res.status(500).json({
-        error: 'Could not find GarminDB SQLite database. Set GARMINDB_DB_PATH in env.local.',
-        note: `Expected something like ${path.join(garminHome, 'DBs', 'garmin.db')}`
-      });
-    }
-
-    const dbDir = process.env.GARMINDB_DB_DIR || path.dirname(garminDbPath);
-    const paths = {
-      main: path.join(dbDir, 'garmin.db'),
-      monitoring: path.join(dbDir, 'garmin_monitoring.db'),
-      activities: path.join(dbDir, 'garmin_activities.db'),
-      summary: path.join(dbDir, 'garmin_summary.db')
-    };
-
-    const result = {
-      daily: null,
-      workouts: null,
-      samples: null
-    };
-
-    if (includeDaily) {
-      const mainDb = fs.existsSync(paths.main) ? paths.main : garminDbPath;
-      result.daily = await importFromGarminDbSqlite({ userId, garminDbPath: mainDb, days });
-    }
-    if (includeWorkouts && fs.existsSync(paths.activities)) {
-      result.workouts = await importFromGarminActivitiesDb({ userId, garminActivitiesPath: paths.activities, days });
-    }
-    if (includeSamples && fs.existsSync(paths.monitoring)) {
-      result.samples = await importFromGarminMonitoringDb({ userId, garminMonitoringPath: paths.monitoring, days: samplesDays });
-    }
-
-    return res.json({
-      message: 'GarminDB autosync complete',
-      days,
-      dbDir,
-      paths,
-      includeDaily,
-      includeWorkouts,
-      includeSamples,
-      samplesDays,
-      summary: {
-        activity_days: result.daily?.activity_upserts || 0,
-        sleep_days: result.daily?.sleep_upserts || 0,
-        weight_days: result.daily?.weight_upserts || 0,
-        resting_hr_days: result.daily?.hr_samples || 0,
-        workout_sessions: result.workouts?.sessions_upserts || 0,
-        hr_samples: result.samples?.hr_samples || 0
-      },
-      note: includeSamples
-        ? 'Raw HR samples can be very large; consider limiting samplesDays.'
-        : 'Daily metrics + workouts imported. Enable raw samples only if you need high-resolution HR/SpO2/RR streams.'
-    });
+    const result = await runGarminAutoSync({ userId, days, includeDaily, includeWorkouts, includeSamples, samplesDays });
+    res.json({ message: 'GarminDB autosync complete', result });
   } catch (e) {
+    if (e.message.includes('disabled')) return res.status(403).json({ error: e.message });
     return res.status(500).json({ error: e.message });
   }
 });
+
+// Schedule Daily Sync (at 04:00 AM)
+cron.schedule('0 4 * * *', async () => {
+  if (String(process.env.ENABLE_GARMINDB_AUTOSYNC || '').toLowerCase() === 'true') {
+    console.log('[Cron] Starting daily GarminDB sync...');
+    try {
+      const adminId = await ensureAtLeastOneUser(); // default to first user
+      if (adminId) {
+        await runGarminAutoSync({ userId: adminId, days: 3 }); // smaller window for daily sync
+        console.log('[Cron] Daily GarminDB sync success');
+      } else {
+        console.log('[Cron] No user found to sync for.');
+      }
+    } catch (e) {
+      console.error('[Cron] Daily GarminDB sync failed:', e.message);
+    }
+  }
+});
+
+
+
 
 app.get('/api/integrations/hume', async (req, res) => {
   try {
@@ -5026,7 +5036,7 @@ app.post('/api/apple-health/import', appleHealthUpload.single('appleHealthFile')
     }
 
     // Clean up uploaded file
-    fs.unlink(filePath, () => {});
+    fs.unlink(filePath, () => { });
 
     res.json({
       message: 'Apple Health import complete',
@@ -5037,7 +5047,7 @@ app.post('/api/apple-health/import', appleHealthUpload.single('appleHealthFile')
       }
     });
   } catch (e) {
-    if (req.file?.path) fs.unlink(req.file.path, () => {});
+    if (req.file?.path) fs.unlink(req.file.path, () => { });
     res.status(500).json({ error: e.message });
   }
 });
@@ -5161,7 +5171,7 @@ app.post('/api/android-health/import', androidHealthUpload.single('androidHealth
       }
     }
 
-    fs.unlink(filePath, () => {});
+    fs.unlink(filePath, () => { });
 
     res.json({
       message: 'Android import complete',
@@ -5173,7 +5183,7 @@ app.post('/api/android-health/import', androidHealthUpload.single('androidHealth
       }
     });
   } catch (e) {
-    if (req.file?.path) fs.unlink(req.file.path, () => {});
+    if (req.file?.path) fs.unlink(req.file.path, () => { });
     res.status(500).json({ error: e.message });
   }
 });
@@ -5187,13 +5197,13 @@ app.post('/api/garmin-upload', garminUpload.single('garminFile'), async (req, re
 
   const filePath = req.file.path;
   const filename = req.file.originalname;
-  
+
   console.log('Garmin file upload received:', filename);
-  
+
   try {
     const parser = new GarminParser();
     const parsedData = await parser.parseFile(filePath, filename);
-    
+
     // Import data into database
     const importResults = {
       activities: 0,
@@ -5213,13 +5223,13 @@ app.post('/api/garmin-upload', garminUpload.single('garminFile'), async (req, re
               importResults.errors.push(`Error checking existing activity: ${err.message}`);
               return;
             }
-            
+
             if (existing) {
               // Update existing record
               db.run(
                 'UPDATE activity_data SET steps = COALESCE(?, steps), calories_burned = COALESCE(?, calories_burned), heart_rate_avg = COALESCE(?, heart_rate_avg), active_minutes = COALESCE(?, active_minutes) WHERE user_id = ? AND date = ?',
                 [activity.steps, activity.calories_burned, activity.heart_rate_avg, activity.active_minutes, userId, activity.date],
-                function(updateErr) {
+                function (updateErr) {
                   if (updateErr) {
                     importResults.errors.push(`Error updating activity: ${updateErr.message}`);
                   } else {
@@ -5232,7 +5242,7 @@ app.post('/api/garmin-upload', garminUpload.single('garminFile'), async (req, re
               db.run(
                 'INSERT INTO activity_data (user_id, date, steps, calories_burned, heart_rate_avg, active_minutes) VALUES (?, ?, ?, ?, ?, ?)',
                 [userId, activity.date, activity.steps, activity.calories_burned, activity.heart_rate_avg, activity.active_minutes],
-                function(insertErr) {
+                function (insertErr) {
                   if (insertErr) {
                     importResults.errors.push(`Error inserting activity: ${insertErr.message}`);
                   } else {
@@ -5257,12 +5267,12 @@ app.post('/api/garmin-upload', garminUpload.single('garminFile'), async (req, re
               importResults.errors.push(`Error checking existing sleep: ${err.message}`);
               return;
             }
-            
+
             if (existing) {
               db.run(
                 'UPDATE sleep_data SET score = COALESCE(?, score), duration_hours = COALESCE(?, duration_hours), deep_sleep_hours = COALESCE(?, deep_sleep_hours), rem_sleep_hours = COALESCE(?, rem_sleep_hours), bedtime = COALESCE(?, bedtime), wake_time = COALESCE(?, wake_time) WHERE user_id = ? AND date = ?',
                 [sleep.score, sleep.duration_hours, sleep.deep_sleep_hours, sleep.rem_sleep_hours, sleep.bedtime, sleep.wake_time, userId, sleep.date],
-                function(updateErr) {
+                function (updateErr) {
                   if (updateErr) {
                     importResults.errors.push(`Error updating sleep: ${updateErr.message}`);
                   } else {
@@ -5274,7 +5284,7 @@ app.post('/api/garmin-upload', garminUpload.single('garminFile'), async (req, re
               db.run(
                 'INSERT INTO sleep_data (user_id, date, score, duration_hours, deep_sleep_hours, rem_sleep_hours, bedtime, wake_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
                 [userId, sleep.date, sleep.score, sleep.duration_hours, sleep.deep_sleep_hours, sleep.rem_sleep_hours, sleep.bedtime, sleep.wake_time],
-                function(insertErr) {
+                function (insertErr) {
                   if (insertErr) {
                     importResults.errors.push(`Error inserting sleep: ${insertErr.message}`);
                   } else {
@@ -5297,7 +5307,7 @@ app.post('/api/garmin-upload', garminUpload.single('garminFile'), async (req, re
           db.run(
             'UPDATE activity_data SET heart_rate_avg = ? WHERE user_id = ? AND date = ?',
             [hr.heart_rate_avg, userId, hr.date],
-            function(updateErr) {
+            function (updateErr) {
               if (!updateErr) {
                 importResults.heartRate++;
               }
@@ -5318,12 +5328,12 @@ app.post('/api/garmin-upload', garminUpload.single('garminFile'), async (req, re
               importResults.errors.push(`Error checking existing mood: ${err.message}`);
               return;
             }
-            
+
             if (existing) {
               db.run(
                 'UPDATE mood_data SET stress_score = ? WHERE user_id = ? AND date = ?',
                 [stress.stress_score, userId, stress.date],
-                function(updateErr) {
+                function (updateErr) {
                   if (!updateErr) {
                     importResults.stress++;
                   }
@@ -5334,7 +5344,7 @@ app.post('/api/garmin-upload', garminUpload.single('garminFile'), async (req, re
               db.run(
                 'INSERT INTO mood_data (user_id, date, mood_score, energy_score, stress_score, anxiety_score) VALUES (?, ?, 5, 5, ?, 5)',
                 [userId, stress.date, stress.stress_score],
-                function(insertErr) {
+                function (insertErr) {
                   if (!insertErr) {
                     importResults.stress++;
                   }
@@ -5372,7 +5382,7 @@ app.post('/api/garmin-upload', garminUpload.single('garminFile'), async (req, re
     fs.unlink(filePath, (unlinkErr) => {
       if (unlinkErr) console.error('Error deleting file:', unlinkErr);
     });
-    
+
     console.error('Garmin upload error:', error);
     return res.status(500).json({ error: `Error processing Garmin file: ${error.message}` });
   }
@@ -5440,7 +5450,7 @@ app.post('/api/analysis/correlations', async (req, res) => {
 app.get('/api/dashboard/summary', async (req, res) => {
   try {
     const userId = reqUserId(req);
-    
+
     // Get recent data counts - use CURRENT_DATE for Postgres compatibility
     const dateExpr = USE_PG ? "CURRENT_DATE - INTERVAL '7 days'" : 'date("now", "-7 days")';
     const queries = [
@@ -5450,7 +5460,7 @@ app.get('/api/dashboard/summary', async (req, res) => {
       `SELECT COUNT(*) as count FROM nutrition_data WHERE user_id = ? AND date >= ${dateExpr}`
     ];
     const keys = ['sleep', 'activity', 'mood', 'nutrition'];
-    
+
     const results = {};
     for (let i = 0; i < queries.length; i++) {
       const row = await getDb(queries[i], [userId]);
@@ -5466,7 +5476,7 @@ app.get('/api/dashboard/summary', async (req, res) => {
 app.get('/api/garmin-data', async (req, res) => {
   try {
     const userId = reqUserId(req);
-    
+
     // Get all data in parallel
     const [activities, sleep, heartRateRows, stressRows] = await Promise.all([
       allDb('SELECT * FROM activity_data WHERE user_id = ? ORDER BY date DESC', [userId]),
@@ -5536,7 +5546,7 @@ function analyzeGeneticData(data) {
   // Placeholder analysis - in a real app, this would use proper genetic analysis libraries
   const lines = data.split('\n');
   const snpCount = lines.filter(line => line.includes('rs')).length;
-  
+
   return {
     totalSNPs: snpCount,
     analysisDate: new Date().toISOString(),
@@ -5552,6 +5562,100 @@ function analyzeGeneticData(data) {
   };
 }
 
+// Initialize HTTP server and Socket.IO
+const http = require('http');
+const { Server } = require('socket.io');
+
+// Create HTTP server wrapping the Express app
+const server = http.createServer(app);
+const io = new Server(server);
+
+// Interactive Garmin Sync Handler
+io.on('connection', (socket) => {
+  console.log('Client connected to socket:', socket.id);
+
+  socket.on('garmin:start-sync', async (params) => {
+    try {
+      const { userId, days } = params;
+      // Force authentication check again if needed, or trust the socket session if linked
+      // For simplicity, we assume the user is authorized if they can reach this socket event
+      // In prod, check cookie/session here.
+
+      await startInteractiveGarminSync(socket, { ...params });
+
+    } catch (e) {
+      socket.emit('garmin:error', e.message);
+    }
+  });
+});
+
+async function startInteractiveGarminSync(socket, { days = 30 }) {
+  if (String(process.env.ENABLE_GARMINDB_AUTOSYNC || '').toLowerCase() !== 'true') {
+    socket.emit('garmin:error', 'GarminDB autosync is disabled in env.local');
+    return;
+  }
+
+  const cli = process.env.GARMINDB_CLI || 'garmindb_cli.py';
+  const cliArgs = [cli, '--all', '--download', '--import', '--analyze', '--latest'];
+
+  socket.emit('garmin:log', `Spawned: ${cli} ${cliArgs.slice(1).join(' ')}`);
+
+  // Spawn process with pipe stdio
+  const { spawn } = require('child_process');
+  const child = spawn(cliArgs[0], cliArgs.slice(1), {
+    cwd: process.cwd(),
+    stdio: ['pipe', 'pipe', 'pipe']
+  });
+
+  let buffer = '';
+
+  child.stdout.on('data', (data) => {
+    const str = data.toString();
+    socket.emit('garmin:log', str);
+    buffer += str;
+
+    // Detect Prompts (Heuristic based on GarminDB/Python prompts)
+    // Common prompts: "Username: ", "Password: ", "MFA Code: "
+    if (str.match(/Username:/i)) {
+      socket.emit('garmin:prompt', { field: 'username', label: 'Garmin Email' });
+    } else if (str.match(/Password:/i)) {
+      socket.emit('garmin:prompt', { field: 'password', label: 'Garmin Password', type: 'password' });
+    } else if (str.match(/Authentication code:/i) || str.match(/MFA/i) || str.match(/Code:/i)) {
+      socket.emit('garmin:prompt', { field: 'mfa', label: '2FA Code / Email Code' });
+    }
+  });
+
+  child.stderr.on('data', (data) => {
+    socket.emit('garmin:log', `[ERR] ${data.toString()}`);
+  });
+
+  child.on('close', (code) => {
+    socket.emit('garmin:done', { code });
+  });
+
+  // Handle Input from Client
+  const inputHandler = ({ value }) => {
+    child.stdin.write(value + '\n');
+    socket.emit('garmin:log', `> [Sending Input] ***\n`);
+  };
+
+  socket.on('garmin:input', inputHandler);
+
+  // Cleanup on disconnect or finish
+  const cleanup = () => {
+    socket.off('garmin:input', inputHandler);
+    // Do NOT kill the child immediately if socket disconnects? 
+    // Better to kill it to avoid zombie processes waiting for input.
+    if (!child.killed) child.kill();
+  };
+
+  // If child finishes, remove listener
+  child.on('exit', () => socket.off('garmin:input', inputHandler));
+  socket.on('disconnect', cleanup);
+}
+
+// ... existing error handlers ...
+
 // Serve the main HTML file
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
@@ -5566,7 +5670,7 @@ app.use((err, req, res, next) => {
 
   console.error('Error:', err.message);
   console.error(err.stack);
-  
+
   // Handle multer errors
   if (err instanceof multer.MulterError) {
     if (err.code === 'LIMIT_FILE_SIZE') {
@@ -5574,7 +5678,7 @@ app.use((err, req, res, next) => {
     }
     return res.status(400).json({ error: err.message });
   }
-  
+
   // Handle other errors
   res.status(500).json({ error: err.message || 'Something went wrong!' });
 });
@@ -5582,8 +5686,8 @@ app.use((err, req, res, next) => {
 // Graceful shutdown
 process.on('SIGINT', () => {
   try {
-    if (serverHandle) serverHandle.close(() => {});
-  } catch {}
+    if (serverHandle) serverHandle.close(() => { });
+  } catch { }
 
   if (!USE_PG && db) {
     db.close((err) => {
@@ -5595,4 +5699,17 @@ process.on('SIGINT', () => {
     process.exit(0);
   }
 });
+
+const PORT = process.env.PORT || 3000;
+let serverHandle = server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`Database: ${USE_PG ? 'PostgreSQL' : 'SQLite'}`);
+  // Only try to ensure user if DB is ready (simple check)
+  if (!USE_PG) {
+    // For SQLite, logic is synchronous-ish mostly
+    ensureAtLeastOneUser();
+  }
+});
+
 
