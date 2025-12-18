@@ -2100,44 +2100,39 @@ async function upsertDaySleep(userId, date, patch) {
 // API Routes
 
 // Sleep data endpoints
-app.get('/api/sleep', (req, res) => {
-  const userId = reqUserId(req);
-  db.all('SELECT * FROM sleep_data WHERE user_id = ? ORDER BY date DESC', [userId], (err, rows) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
+app.get('/api/sleep', async (req, res) => {
+  try {
+    const userId = reqUserId(req);
+    const rows = await allDb('SELECT * FROM sleep_data WHERE user_id = ? ORDER BY date DESC', [userId]);
     res.json(rows);
-  });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-app.post('/api/sleep', (req, res) => {
-  const userId = reqUserId(req);
-  const { date, score, duration_hours, deep_sleep_hours, rem_sleep_hours, bedtime, wake_time } = req.body;
-  
-  db.run(
-    'INSERT INTO sleep_data (user_id, date, score, duration_hours, deep_sleep_hours, rem_sleep_hours, bedtime, wake_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-    [userId, date, score, duration_hours, deep_sleep_hours, rem_sleep_hours, bedtime, wake_time],
-    function(err) {
-      if (err) {
-        res.status(500).json({ error: err.message });
-        return;
-      }
-      res.json({ id: this.lastID, message: 'Sleep data added successfully' });
-    }
-  );
+app.post('/api/sleep', async (req, res) => {
+  try {
+    const userId = reqUserId(req);
+    const { date, score, duration_hours, deep_sleep_hours, rem_sleep_hours, bedtime, wake_time } = req.body;
+    const result = await runDb(
+      'INSERT INTO sleep_data (user_id, date, score, duration_hours, deep_sleep_hours, rem_sleep_hours, bedtime, wake_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [userId, date, score, duration_hours, deep_sleep_hours, rem_sleep_hours, bedtime, wake_time]
+    );
+    res.json({ id: result.lastID, message: 'Sleep data added successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Activity data endpoints
-app.get('/api/activity', (req, res) => {
-  const userId = reqUserId(req);
-  db.all('SELECT * FROM activity_data WHERE user_id = ? ORDER BY date DESC', [userId], (err, rows) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
+app.get('/api/activity', async (req, res) => {
+  try {
+    const userId = reqUserId(req);
+    const rows = await allDb('SELECT * FROM activity_data WHERE user_id = ? ORDER BY date DESC', [userId]);
     res.json(rows);
-  });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Biometrics: list types + aggregated time series (used by Trends tab)
@@ -2201,21 +2196,18 @@ app.get('/api/biometrics/series', async (req, res) => {
   }
 });
 
-app.post('/api/activity', (req, res) => {
-  const userId = reqUserId(req);
-  const { date, steps, calories_burned, heart_rate_avg, active_minutes } = req.body;
-  
-  db.run(
-    'INSERT INTO activity_data (user_id, date, steps, calories_burned, heart_rate_avg, active_minutes) VALUES (?, ?, ?, ?, ?, ?)',
-    [userId, date, steps, calories_burned, heart_rate_avg, active_minutes],
-    function(err) {
-      if (err) {
-        res.status(500).json({ error: err.message });
-        return;
-      }
-      res.json({ id: this.lastID, message: 'Activity data added successfully' });
-    }
-  );
+app.post('/api/activity', async (req, res) => {
+  try {
+    const userId = reqUserId(req);
+    const { date, steps, calories_burned, heart_rate_avg, active_minutes } = req.body;
+    const result = await runDb(
+      'INSERT INTO activity_data (user_id, date, steps, calories_burned, heart_rate_avg, active_minutes) VALUES (?, ?, ?, ?, ?, ?)',
+      [userId, date, steps, calories_burned, heart_rate_avg, active_minutes]
+    );
+    res.json({ id: result.lastID, message: 'Activity data added successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Labs / Biomarkers
@@ -2418,61 +2410,53 @@ app.post('/api/labs/import', labsUpload.single('file'), async (req, res) => {
 });
 
 // Nutrition data endpoints
-app.get('/api/nutrition', (req, res) => {
-  const userId = reqUserId(req);
-  db.all('SELECT * FROM nutrition_data WHERE user_id = ? ORDER BY date DESC', [userId], (err, rows) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
+app.get('/api/nutrition', async (req, res) => {
+  try {
+    const userId = reqUserId(req);
+    const rows = await allDb('SELECT * FROM nutrition_data WHERE user_id = ? ORDER BY date DESC', [userId]);
     res.json(rows);
-  });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-app.post('/api/nutrition', (req, res) => {
-  const userId = reqUserId(req);
-  const { date, calories, protein_g, carbs_g, fat_g, fiber_g, sugar_g } = req.body;
-  
-  db.run(
-    'INSERT INTO nutrition_data (user_id, date, calories, protein_g, carbs_g, fat_g, fiber_g, sugar_g) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-    [userId, date, calories, protein_g, carbs_g, fat_g, fiber_g, sugar_g],
-    function(err) {
-      if (err) {
-        res.status(500).json({ error: err.message });
-        return;
-      }
-      res.json({ id: this.lastID, message: 'Nutrition data added successfully' });
-    }
-  );
+app.post('/api/nutrition', async (req, res) => {
+  try {
+    const userId = reqUserId(req);
+    const { date, calories, protein_g, carbs_g, fat_g, fiber_g, sugar_g } = req.body;
+    const result = await runDb(
+      'INSERT INTO nutrition_data (user_id, date, calories, protein_g, carbs_g, fat_g, fiber_g, sugar_g) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [userId, date, calories, protein_g, carbs_g, fat_g, fiber_g, sugar_g]
+    );
+    res.json({ id: result.lastID, message: 'Nutrition data added successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Food log endpoints
-app.get('/api/food-log', (req, res) => {
-  const userId = reqUserId(req);
-  db.all('SELECT * FROM food_log WHERE user_id = ? ORDER BY date DESC', [userId], (err, rows) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
+app.get('/api/food-log', async (req, res) => {
+  try {
+    const userId = reqUserId(req);
+    const rows = await allDb('SELECT * FROM food_log WHERE user_id = ? ORDER BY date DESC', [userId]);
     res.json(rows);
-  });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-app.post('/api/food-log', (req, res) => {
-  const userId = reqUserId(req);
-  const { date, time, food_name, calories, protein_g, carbs_g, fat_g, serving_size } = req.body;
-  
-  db.run(
-    'INSERT INTO food_log (user_id, date, time, food_name, calories, protein_g, carbs_g, fat_g, serving_size) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-    [userId, date, time || null, food_name, calories, protein_g, carbs_g, fat_g, serving_size],
-    function(err) {
-      if (err) {
-        res.status(500).json({ error: err.message });
-        return;
-      }
-      res.json({ id: this.lastID, message: 'Food log entry added successfully' });
-    }
-  );
+app.post('/api/food-log', async (req, res) => {
+  try {
+    const userId = reqUserId(req);
+    const { date, time, food_name, calories, protein_g, carbs_g, fat_g, serving_size } = req.body;
+    const result = await runDb(
+      'INSERT INTO food_log (user_id, date, time, food_name, calories, protein_g, carbs_g, fat_g, serving_size) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [userId, date, time || null, food_name, calories, protein_g, carbs_g, fat_g, serving_size]
+    );
+    res.json({ id: result.lastID, message: 'Food log entry added successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // AI estimate for manual food log entry (name + quantity)
@@ -2500,73 +2484,71 @@ app.post('/api/food/estimate', async (req, res) => {
 });
 
 // Mood data endpoints
-app.get('/api/mood', (req, res) => {
-  const userId = reqUserId(req);
-  db.all('SELECT * FROM mood_data WHERE user_id = ? ORDER BY date DESC', [userId], (err, rows) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
+app.get('/api/mood', async (req, res) => {
+  try {
+    const userId = reqUserId(req);
+    const rows = await allDb('SELECT * FROM mood_data WHERE user_id = ? ORDER BY date DESC', [userId]);
     res.json(rows);
-  });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-app.post('/api/mood', (req, res) => {
-  const userId = reqUserId(req);
-  const { date, mood_score, energy_score, stress_score, anxiety_score, notes } = req.body;
-  
-  db.run(
-    'INSERT INTO mood_data (user_id, date, mood_score, energy_score, stress_score, anxiety_score, notes) VALUES (?, ?, ?, ?, ?, ?, ?)',
-    [userId, date, mood_score, energy_score, stress_score, anxiety_score, notes],
-    function(err) {
-      if (err) {
-        res.status(500).json({ error: err.message });
-        return;
-      }
-      res.json({ id: this.lastID, message: 'Mood data added successfully' });
-    }
-  );
+app.post('/api/mood', async (req, res) => {
+  try {
+    const userId = reqUserId(req);
+    const { date, mood_score, energy_score, stress_score, anxiety_score, notes } = req.body;
+    const result = await runDb(
+      'INSERT INTO mood_data (user_id, date, mood_score, energy_score, stress_score, anxiety_score, notes) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [userId, date, mood_score, energy_score, stress_score, anxiety_score, notes]
+    );
+    res.json({ id: result.lastID, message: 'Mood data added successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Supplements endpoints
-app.get('/api/supplements', (req, res) => {
-  // Backward-compatible: return regimens list (new model)
-  const userId = reqUserId(req);
-  db.all(
-    'SELECT * FROM supplement_regimens WHERE user_id = ? AND is_active = 1 ORDER BY lower(name) ASC',
-    [userId],
-    (err, rows) => {
-      if (err) return res.status(500).json({ error: err.message });
-      res.json(rows.map(r => ({
-        ...r,
-        default_times: r.default_times_json ? (safeJsonParse(r.default_times_json) || []) : [],
-        days_of_week: r.days_of_week_json ? (safeJsonParse(r.days_of_week_json) || []) : []
-      })));
-    }
-  );
+app.get('/api/supplements', async (req, res) => {
+  try {
+    // Backward-compatible: return regimens list (new model)
+    const userId = reqUserId(req);
+    const rows = await allDb(
+      'SELECT * FROM supplement_regimens WHERE user_id = ? AND is_active = 1 ORDER BY lower(name) ASC',
+      [userId]
+    );
+    res.json(rows.map(r => ({
+      ...r,
+      default_times: r.default_times_json ? (safeJsonParse(r.default_times_json) || []) : [],
+      days_of_week: r.days_of_week_json ? (safeJsonParse(r.days_of_week_json) || []) : []
+    })));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-app.post('/api/supplements', (req, res) => {
-  // Backward-compatible create: treat as a regimen (dosage/timing as free text)
-  const userId = reqUserId(req);
-  const { name, dosage, timing, notes, start_date, end_date } = req.body;
-  const times = [];
-  const t = String(timing || '').toLowerCase();
-  if (t.includes('morning')) times.push('08:00');
-  if (t.includes('evening') || t.includes('night')) times.push('20:00');
-  if (t.includes('midday') || t.includes('lunch')) times.push('12:30');
-  const timesJson = times.length ? JSON.stringify(times) : null;
+app.post('/api/supplements', async (req, res) => {
+  try {
+    // Backward-compatible create: treat as a regimen (dosage/timing as free text)
+    const userId = reqUserId(req);
+    const { name, dosage, timing, notes, start_date, end_date } = req.body;
+    const times = [];
+    const t = String(timing || '').toLowerCase();
+    if (t.includes('morning')) times.push('08:00');
+    if (t.includes('evening') || t.includes('night')) times.push('20:00');
+    if (t.includes('midday') || t.includes('lunch')) times.push('12:30');
+    const timesJson = times.length ? JSON.stringify(times) : null;
 
-  db.run(
-    `INSERT INTO supplement_regimens
-      (user_id, name, dose_text, default_times_json, start_date, end_date, notes, is_active, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, 1, CURRENT_TIMESTAMP)`,
-    [userId, name, dosage || null, timesJson, start_date || null, end_date || null, notes || null],
-    function(err) {
-      if (err) return res.status(500).json({ error: err.message });
-      res.json({ id: this.lastID, message: 'Supplement regimen added' });
-    }
-  );
+    const result = await runDb(
+      `INSERT INTO supplement_regimens
+        (user_id, name, dose_text, default_times_json, start_date, end_date, notes, is_active, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, 1, CURRENT_TIMESTAMP)`,
+      [userId, name, dosage || null, timesJson, start_date || null, end_date || null, notes || null]
+    );
+    res.json({ id: result.lastID, message: 'Supplement regimen added' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // New supplements model
@@ -2791,45 +2773,47 @@ app.post('/api/supplements/day/clear', async (req, res) => {
 });
 
 // Medications endpoints
-app.get('/api/medications', (req, res) => {
-  // Backward-compatible: return regimens list (new model)
-  const userId = reqUserId(req);
-  db.all(
-    'SELECT * FROM medication_regimens WHERE user_id = ? AND is_active = 1 ORDER BY lower(name) ASC',
-    [userId],
-    (err, rows) => {
-      if (err) return res.status(500).json({ error: err.message });
-      res.json(rows.map(r => ({
-        ...r,
-        default_times: r.default_times_json ? (safeJsonParse(r.default_times_json) || []) : [],
-        days_of_week: r.days_of_week_json ? (safeJsonParse(r.days_of_week_json) || []) : []
-      })));
-    }
-  );
+app.get('/api/medications', async (req, res) => {
+  try {
+    // Backward-compatible: return regimens list (new model)
+    const userId = reqUserId(req);
+    const rows = await allDb(
+      'SELECT * FROM medication_regimens WHERE user_id = ? AND is_active = 1 ORDER BY lower(name) ASC',
+      [userId]
+    );
+    res.json(rows.map(r => ({
+      ...r,
+      default_times: r.default_times_json ? (safeJsonParse(r.default_times_json) || []) : [],
+      days_of_week: r.days_of_week_json ? (safeJsonParse(r.days_of_week_json) || []) : []
+    })));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-app.post('/api/medications', (req, res) => {
-  // Backward-compatible create: treat as a regimen (dosage/frequency as free text)
-  const userId = reqUserId(req);
-  const { name, dosage, frequency, start_date, end_date, notes } = req.body;
-  const times = [];
-  const f = String(frequency || '').toLowerCase();
-  if (f.includes('morning') || f.includes('am')) times.push('08:00');
-  if (f.includes('evening') || f.includes('night') || f.includes('pm')) times.push('20:00');
-  if (f.includes('midday') || f.includes('noon') || f.includes('lunch')) times.push('12:30');
-  const timesJson = times.length ? JSON.stringify(times) : null;
-  const freqNorm = (f.includes('weekday') || f.includes('mon') || f.includes('tue') || f.includes('wed') || f.includes('thu') || f.includes('fri')) ? 'weekdays' : 'daily';
+app.post('/api/medications', async (req, res) => {
+  try {
+    // Backward-compatible create: treat as a regimen (dosage/frequency as free text)
+    const userId = reqUserId(req);
+    const { name, dosage, frequency, start_date, end_date, notes } = req.body;
+    const times = [];
+    const f = String(frequency || '').toLowerCase();
+    if (f.includes('morning') || f.includes('am')) times.push('08:00');
+    if (f.includes('evening') || f.includes('night') || f.includes('pm')) times.push('20:00');
+    if (f.includes('midday') || f.includes('noon') || f.includes('lunch')) times.push('12:30');
+    const timesJson = times.length ? JSON.stringify(times) : null;
+    const freqNorm = (f.includes('weekday') || f.includes('mon') || f.includes('tue') || f.includes('wed') || f.includes('thu') || f.includes('fri')) ? 'weekdays' : 'daily';
 
-  db.run(
-    `INSERT INTO medication_regimens
-      (user_id, name, dose_text, frequency, default_times_json, start_date, end_date, notes, is_active, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, CURRENT_TIMESTAMP)`,
-    [userId, name, dosage || null, freqNorm, timesJson, start_date || null, end_date || null, notes || null],
-    function(err) {
-      if (err) return res.status(500).json({ error: err.message });
-      res.json({ id: this.lastID, message: 'Medication regimen added' });
-    }
-  );
+    const result = await runDb(
+      `INSERT INTO medication_regimens
+        (user_id, name, dose_text, frequency, default_times_json, start_date, end_date, notes, is_active, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, CURRENT_TIMESTAMP)`,
+      [userId, name, dosage || null, freqNorm, timesJson, start_date || null, end_date || null, notes || null]
+    );
+    res.json({ id: result.lastID, message: 'Medication regimen added' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // New medications model
@@ -5377,209 +5361,156 @@ app.post('/api/garmin-upload', garminUpload.single('garminFile'), async (req, re
 });
 
 // Get all genetic data
-app.get('/api/genetic-data', (req, res) => {
-  const userId = reqUserId(req);
-  db.all('SELECT * FROM genetic_data WHERE user_id = ? ORDER BY uploaded_at DESC', [userId], (err, rows) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
+app.get('/api/genetic-data', async (req, res) => {
+  try {
+    const userId = reqUserId(req);
+    const rows = await allDb('SELECT * FROM genetic_data WHERE user_id = ? ORDER BY uploaded_at DESC', [userId]);
     // Parse analysis_results JSON for each row
     const parsedRows = rows.map(row => ({
       ...row,
       analysis_results: row.analysis_results ? JSON.parse(row.analysis_results) : null
     }));
     res.json(parsedRows);
-  });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Get specific genetic data by ID
-app.get('/api/genetic-data/:id', (req, res) => {
-  const userId = reqUserId(req);
-  const id = req.params.id;
-  db.get('SELECT * FROM genetic_data WHERE user_id = ? AND id = ?', [userId, id], (err, row) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
+app.get('/api/genetic-data/:id', async (req, res) => {
+  try {
+    const userId = reqUserId(req);
+    const id = req.params.id;
+    const row = await getDb('SELECT * FROM genetic_data WHERE user_id = ? AND id = ?', [userId, id]);
     if (!row) {
       return res.status(404).json({ error: 'Genetic data not found' });
     }
     // Parse analysis_results JSON
     row.analysis_results = row.analysis_results ? JSON.parse(row.analysis_results) : null;
     res.json(row);
-  });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Analysis endpoints
-app.get('/api/analysis/correlations', (req, res) => {
-  const userId = reqUserId(req);
-  db.all('SELECT * FROM correlations WHERE user_id = ? ORDER BY created_at DESC', [userId], (err, rows) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
+app.get('/api/analysis/correlations', async (req, res) => {
+  try {
+    const userId = reqUserId(req);
+    const rows = await allDb('SELECT * FROM correlations WHERE user_id = ? ORDER BY created_at DESC', [userId]);
     res.json(rows);
-  });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-app.post('/api/analysis/correlations', (req, res) => {
-  const userId = reqUserId(req);
-  const { factor1, factor2, correlation_coefficient, p_value, sample_size } = req.body;
-  
-  db.run(
-    'INSERT INTO correlations (user_id, factor1, factor2, correlation_coefficient, p_value, sample_size) VALUES (?, ?, ?, ?, ?, ?)',
-    [userId, factor1, factor2, correlation_coefficient, p_value, sample_size],
-    function(err) {
-      if (err) {
-        res.status(500).json({ error: err.message });
-        return;
-      }
-      res.json({ id: this.lastID, message: 'Correlation analysis saved successfully' });
-    }
-  );
+app.post('/api/analysis/correlations', async (req, res) => {
+  try {
+    const userId = reqUserId(req);
+    const { factor1, factor2, correlation_coefficient, p_value, sample_size } = req.body;
+    const result = await runDb(
+      'INSERT INTO correlations (user_id, factor1, factor2, correlation_coefficient, p_value, sample_size) VALUES (?, ?, ?, ?, ?, ?)',
+      [userId, factor1, factor2, correlation_coefficient, p_value, sample_size]
+    );
+    res.json({ id: result.lastID, message: 'Correlation analysis saved successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Dashboard summary endpoint
-app.get('/api/dashboard/summary', (req, res) => {
-  const userId = reqUserId(req);
-  
-  // Get recent data counts
-  const queries = [
-    'SELECT COUNT(*) as count FROM sleep_data WHERE user_id = ? AND date >= date(\"now\", \"-7 days\")',
-    'SELECT COUNT(*) as count FROM activity_data WHERE user_id = ? AND date >= date(\"now\", \"-7 days\")',
-    'SELECT COUNT(*) as count FROM mood_data WHERE user_id = ? AND date >= date(\"now\", \"-7 days\")',
-    'SELECT COUNT(*) as count FROM nutrition_data WHERE user_id = ? AND date >= date(\"now\", \"-7 days\")'
-  ];
-  
-  let completed = 0;
-  const results = {};
-  
-  queries.forEach((query, index) => {
-    db.get(query, [userId], (err, row) => {
-      if (err) {
-        console.error('Error in dashboard query:', err.message);
-      } else {
-        const keys = ['sleep', 'activity', 'mood', 'nutrition'];
-        results[keys[index]] = row.count;
-      }
-      
-      completed++;
-      if (completed === queries.length) {
-        res.json(results);
-      }
-    });
-  });
+app.get('/api/dashboard/summary', async (req, res) => {
+  try {
+    const userId = reqUserId(req);
+    
+    // Get recent data counts - use CURRENT_DATE for Postgres compatibility
+    const dateExpr = USE_PG ? "CURRENT_DATE - INTERVAL '7 days'" : 'date("now", "-7 days")';
+    const queries = [
+      `SELECT COUNT(*) as count FROM sleep_data WHERE user_id = ? AND date >= ${dateExpr}`,
+      `SELECT COUNT(*) as count FROM activity_data WHERE user_id = ? AND date >= ${dateExpr}`,
+      `SELECT COUNT(*) as count FROM mood_data WHERE user_id = ? AND date >= ${dateExpr}`,
+      `SELECT COUNT(*) as count FROM nutrition_data WHERE user_id = ? AND date >= ${dateExpr}`
+    ];
+    const keys = ['sleep', 'activity', 'mood', 'nutrition'];
+    
+    const results = {};
+    for (let i = 0; i < queries.length; i++) {
+      const row = await getDb(queries[i], [userId]);
+      results[keys[i]] = row ? Number(row.count) : 0;
+    }
+    res.json(results);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Get all imported Garmin data
-app.get('/api/garmin-data', (req, res) => {
-  const userId = reqUserId(req);
-  const results = {
-    activities: [],
-    sleep: [],
-    heartRate: [],
-    stress: []
-  };
+app.get('/api/garmin-data', async (req, res) => {
+  try {
+    const userId = reqUserId(req);
+    
+    // Get all data in parallel
+    const [activities, sleep, heartRateRows, stressRows] = await Promise.all([
+      allDb('SELECT * FROM activity_data WHERE user_id = ? ORDER BY date DESC', [userId]),
+      allDb('SELECT * FROM sleep_data WHERE user_id = ? ORDER BY date DESC', [userId]),
+      allDb('SELECT date, heart_rate_avg FROM activity_data WHERE user_id = ? AND heart_rate_avg IS NOT NULL ORDER BY date DESC', [userId]),
+      allDb('SELECT date, stress_score FROM mood_data WHERE user_id = ? AND stress_score IS NOT NULL ORDER BY date DESC', [userId])
+    ]);
 
-  // Get all activity data
-  db.all('SELECT * FROM activity_data WHERE user_id = ? ORDER BY date DESC', [userId], (err, rows) => {
-    if (err) {
-      console.error('Error fetching activity data:', err.message);
-    } else {
-      results.activities = rows;
+    const results = {
+      activities,
+      sleep,
+      heartRate: heartRateRows.map(row => ({ date: row.date, heart_rate_avg: row.heart_rate_avg })),
+      stress: stressRows.map(row => ({ date: row.date, stress_score: row.stress_score }))
+    };
+
+    // Calculate summary statistics
+    const summary = {
+      totalActivities: results.activities.length,
+      totalSleepRecords: results.sleep.length,
+      totalHeartRateRecords: results.heartRate.length,
+      totalStressRecords: results.stress.length,
+      dateRange: { earliest: null, latest: null },
+      averages: { steps: null, calories: null, heartRate: null, sleepDuration: null, sleepScore: null }
+    };
+
+    // Calculate date range
+    const allDates = [
+      ...results.activities.map(a => a.date),
+      ...results.sleep.map(s => s.date),
+      ...results.heartRate.map(h => h.date),
+      ...results.stress.map(s => s.date)
+    ].filter(d => d).sort();
+
+    if (allDates.length > 0) {
+      summary.dateRange.earliest = allDates[0];
+      summary.dateRange.latest = allDates[allDates.length - 1];
     }
 
-    // Get all sleep data
-    db.all('SELECT * FROM sleep_data WHERE user_id = ? ORDER BY date DESC', [userId], (err, rows) => {
-      if (err) {
-        console.error('Error fetching sleep data:', err.message);
-      } else {
-        results.sleep = rows;
-      }
+    // Calculate averages
+    if (results.activities.length > 0) {
+      const totalSteps = results.activities.reduce((sum, a) => sum + (a.steps || 0), 0);
+      const totalCalories = results.activities.reduce((sum, a) => sum + (a.calories_burned || 0), 0);
+      summary.averages.steps = Math.round(totalSteps / results.activities.length);
+      summary.averages.calories = Math.round(totalCalories / results.activities.length);
+    }
 
-      // Get heart rate data from activity records
-      db.all('SELECT date, heart_rate_avg FROM activity_data WHERE user_id = ? AND heart_rate_avg IS NOT NULL ORDER BY date DESC', [userId], (err, rows) => {
-        if (err) {
-          console.error('Error fetching heart rate data:', err.message);
-        } else {
-          results.heartRate = rows.map(row => ({
-            date: row.date,
-            heart_rate_avg: row.heart_rate_avg
-          }));
-        }
+    if (results.heartRate.length > 0) {
+      const totalHR = results.heartRate.reduce((sum, h) => sum + (h.heart_rate_avg || 0), 0);
+      summary.averages.heartRate = Math.round(totalHR / results.heartRate.length);
+    }
 
-        // Get stress data from mood records
-        db.all('SELECT date, stress_score FROM mood_data WHERE user_id = ? AND stress_score IS NOT NULL ORDER BY date DESC', [userId], (err, rows) => {
-          if (err) {
-            console.error('Error fetching stress data:', err.message);
-          } else {
-            results.stress = rows.map(row => ({
-              date: row.date,
-              stress_score: row.stress_score
-            }));
-          }
+    if (results.sleep.length > 0) {
+      const totalDuration = results.sleep.reduce((sum, s) => sum + (s.duration_hours || 0), 0);
+      const totalScore = results.sleep.reduce((sum, s) => sum + (s.score || 0), 0);
+      summary.averages.sleepDuration = (totalDuration / results.sleep.length).toFixed(1);
+      summary.averages.sleepScore = (totalScore / results.sleep.length).toFixed(1);
+    }
 
-          // Calculate summary statistics
-          const summary = {
-            totalActivities: results.activities.length,
-            totalSleepRecords: results.sleep.length,
-            totalHeartRateRecords: results.heartRate.length,
-            totalStressRecords: results.stress.length,
-            dateRange: {
-              earliest: null,
-              latest: null
-            },
-            averages: {
-              steps: null,
-              calories: null,
-              heartRate: null,
-              sleepDuration: null,
-              sleepScore: null
-            }
-          };
-
-          // Calculate date range
-          const allDates = [
-            ...results.activities.map(a => a.date),
-            ...results.sleep.map(s => s.date),
-            ...results.heartRate.map(h => h.date),
-            ...results.stress.map(s => s.date)
-          ].filter(d => d).sort();
-
-          if (allDates.length > 0) {
-            summary.dateRange.earliest = allDates[0];
-            summary.dateRange.latest = allDates[allDates.length - 1];
-          }
-
-          // Calculate averages
-          if (results.activities.length > 0) {
-            const totalSteps = results.activities.reduce((sum, a) => sum + (a.steps || 0), 0);
-            const totalCalories = results.activities.reduce((sum, a) => sum + (a.calories_burned || 0), 0);
-            summary.averages.steps = Math.round(totalSteps / results.activities.length);
-            summary.averages.calories = Math.round(totalCalories / results.activities.length);
-          }
-
-          if (results.heartRate.length > 0) {
-            const totalHR = results.heartRate.reduce((sum, h) => sum + (h.heart_rate_avg || 0), 0);
-            summary.averages.heartRate = Math.round(totalHR / results.heartRate.length);
-          }
-
-          if (results.sleep.length > 0) {
-            const totalDuration = results.sleep.reduce((sum, s) => sum + (s.duration_hours || 0), 0);
-            const totalScore = results.sleep.reduce((sum, s) => sum + (s.score || 0), 0);
-            summary.averages.sleepDuration = (totalDuration / results.sleep.length).toFixed(1);
-            summary.averages.sleepScore = (totalScore / results.sleep.length).toFixed(1);
-          }
-
-          res.json({
-            ...results,
-            summary: summary
-          });
-        });
-      });
-    });
-  });
+    res.json({ ...results, summary });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Helper function for genetic data analysis
