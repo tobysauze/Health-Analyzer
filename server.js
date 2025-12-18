@@ -4,6 +4,7 @@ require('dotenv').config({ path: 'env.local', override: true }); // local overri
 
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
+const { Pool } = require('pg');
 const multer = require('multer');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -53,6 +54,7 @@ app.use(express.static('public'));
 
 // Sessions (cookie-based)
 const SQLiteStore = SQLiteStoreFactory(session);
+const PgSession = require('connect-pg-simple')(session);
 
 // Persist session secret across restarts (so "remember me" actually works)
 const SESSION_SECRET_PATH = path.join(process.cwd(), 'session-secret.local');
@@ -71,12 +73,21 @@ if (!sessionSecret) {
   }
 }
 
+const USE_PG = !!process.env.DATABASE_URL;
+
+const sessionStore = USE_PG
+  ? new PgSession({
+      conString: process.env.DATABASE_URL,
+      tableName: 'sessions'
+    })
+  : new SQLiteStore({
+      db: process.env.SESSION_DB || 'sessions.sqlite',
+      dir: process.cwd(),
+      table: 'sessions'
+    });
+
 app.use(session({
-  store: new SQLiteStore({
-    db: process.env.SESSION_DB || 'sessions.sqlite',
-    dir: process.cwd(),
-    table: 'sessions'
-  }),
+  store: sessionStore,
   name: process.env.SESSION_COOKIE_NAME || 'ha.sid',
   secret: sessionSecret,
   resave: false,
@@ -231,30 +242,49 @@ const androidHealthUpload = multer({
   }
 });
 
-// Initialize SQLite database
+// Initialize database (SQLite locally, Postgres in production when DATABASE_URL is set)
+// SQLite DB path (used only when not running against Postgres)
 const DB_PATH = process.env.DB_PATH || process.env.HEALTH_DB || 'health_data.db';
-try {
-  // Ensure DB parent directory exists when using a path like /data/health_data.db
-  const dir = path.dirname(DB_PATH);
-  if (dir && dir !== '.' && dir !== '/') fs.mkdirSync(dir, { recursive: true });
-} catch {}
+if (!USE_PG) {
+  try {
+    // Ensure DB parent directory exists when using a path like /data/health_data.db
+    const dir = path.dirname(DB_PATH);
+    if (dir && dir !== '.' && dir !== '/') fs.mkdirSync(dir, { recursive: true });
+  } catch {}
+}
 
 // Ensure upload directories exist (required for multer destinations)
 try { fs.mkdirSync(path.join(process.cwd(), 'uploads', 'tmp'), { recursive: true }); } catch {}
 try { fs.mkdirSync(path.join(process.cwd(), 'uploads', 'photos'), { recursive: true }); } catch {}
 
-const db = new sqlite3.Database(DB_PATH, (err) => {
-  if (err) {
-    console.error('Error opening database:', err.message);
-  } else {
-    console.log('Connected to SQLite database', DB_PATH);
-    // Bootstrap in the background; server will start after migrations complete.
-    bootstrap().catch((e) => {
-      console.error('Fatal bootstrap error:', e.message);
-      process.exit(1);
-    });
-  }
-});
+let db = null;
+let pgPool = null;
+
+if (USE_PG) {
+  pgPool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
+  });
+  console.log('Using Supabase/Postgres via DATABASE_URL');
+  // In Postgres mode we assume the schema already exists in the remote DB.
+  bootstrap().catch((e) => {
+    console.error('Fatal bootstrap error (Postgres mode):', e.message);
+    process.exit(1);
+  });
+} else {
+  db = new sqlite3.Database(DB_PATH, (err) => {
+    if (err) {
+      console.error('Error opening database:', err.message);
+    } else {
+      console.log('Connected to SQLite database', DB_PATH);
+      // Bootstrap in the background; server will start after migrations complete.
+      bootstrap().catch((e) => {
+        console.error('Fatal bootstrap error:', e.message);
+        process.exit(1);
+      });
+    }
+  });
+}
 
 // Legacy schema init (kept temporarily during refactor)
 async function _initializeDatabaseLegacy() {
@@ -537,9 +567,26 @@ async function _initializeDatabaseLegacy() {
   }
 }
 
+// Simple helper to convert "?" placeholders to Postgres-style "$1, $2, ..."
+function toPgParams(sql, params) {
+  let i = 0;
+  const text = sql.replace(/\?/g, () => {
+    i += 1;
+    return `$${i}`;
+  });
+  return { text, values: params };
+}
+
 function runDb(sql, params = []) {
+  if (USE_PG) {
+    const { text, values } = toPgParams(sql, params);
+    return pgPool.query(text, values).then(res => ({
+      lastID: res.rows?.[0]?.id ?? null,
+      changes: res.rowCount
+    }));
+  }
   return new Promise((resolve, reject) => {
-    db.run(sql, params, function(err) {
+    db.run(sql, params, function (err) {
       if (err) return reject(err);
       resolve({ lastID: this.lastID, changes: this.changes });
     });
@@ -547,6 +594,10 @@ function runDb(sql, params = []) {
 }
 
 function getDb(sql, params = []) {
+  if (USE_PG) {
+    const { text, values } = toPgParams(sql, params);
+    return pgPool.query(text, values).then(res => res.rows[0] || null);
+  }
   return new Promise((resolve, reject) => {
     db.get(sql, params, (err, row) => {
       if (err) return reject(err);
@@ -556,6 +607,10 @@ function getDb(sql, params = []) {
 }
 
 function allDb(sql, params = []) {
+  if (USE_PG) {
+    const { text, values } = toPgParams(sql, params);
+    return pgPool.query(text, values).then(res => res.rows);
+  }
   return new Promise((resolve, reject) => {
     db.all(sql, params, (err, rows) => {
       if (err) return reject(err);
@@ -789,8 +844,12 @@ function reqUserId(req) {
 let serverHandle = null;
 
 async function bootstrap() {
-  await initializeDatabase({ runDb });
-  await runMigrations({ runDb, getDb, allDb, bcrypt, crypto, normalizeEmail });
+  // In Postgres/Supabase mode we assume schema is managed via migrations in the DB itself.
+  // SQLite mode keeps the existing automatic schema migration behavior.
+  if (!USE_PG) {
+    await initializeDatabase({ runDb });
+    await runMigrations({ runDb, getDb, allDb, bcrypt, crypto, normalizeEmail });
+  }
 
   serverHandle = app.listen(PORT, () => {
     console.log(`Health Analytics Dashboard running on http://localhost:${PORT}`);
