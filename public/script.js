@@ -2542,6 +2542,23 @@ async function deleteWorkout(id) {
 }
 window.deleteWorkout = deleteWorkout;
 
+// Modal Helpers
+function showModal(title, content) {
+    document.getElementById('appModalTitle').textContent = title;
+    document.getElementById('appModalBody').innerHTML = content;
+    document.getElementById('appModal').classList.add('open');
+}
+
+function closeModal() {
+    document.getElementById('appModal').classList.remove('open');
+}
+window.closeModal = closeModal;
+
+// Close on Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+});
+
 async function viewWorkout(id) {
     showLoading();
     try {
@@ -2551,13 +2568,61 @@ async function viewWorkout(id) {
             showNotification(data.error || 'Error loading workout', 'error');
             return;
         }
+
         const s = data.session;
-        if (s.type === 'run') {
-            showNotification(`Run: ${s.distance_km ?? '-'}km, ${s.duration_minutes ?? '-'}min`, 'info');
-        } else if (s.type === 'strength') {
-            const ex = [...new Set((data.sets || []).map(x => x.exercise))].slice(0, 3).join(', ');
-            showNotification(`Strength: ${ex || 'sets logged'}`, 'info');
+        let html = '';
+
+        // Common details
+        html += `<div class="info-grid">`;
+        html += `<div class="info-item"><label>Date</label><div>${new Date(s.date).toLocaleDateString()}</div></div>`;
+        html += `<div class="info-item"><label>Type</label><div>${s.type.toUpperCase()}</div></div>`;
+
+        if (s.duration_minutes) {
+            html += `<div class="info-item"><label>Duration</label><div>${Number(s.duration_minutes).toFixed(0)} min</div></div>`;
         }
+
+        if (s.type === 'run') {
+            if (s.distance_km) html += `<div class="info-item"><label>Distance</label><div>${Number(s.distance_km).toFixed(2)} km</div></div>`;
+            if (s.pace_min_per_km) html += `<div class="info-item"><label>Pace</label><div>${Number(s.pace_min_per_km).toFixed(2)} /km</div></div>`;
+            if (s.calories) html += `<div class="info-item"><label>Calories</label><div>${s.calories}</div></div>`;
+        }
+        html += `</div>`; // end grid
+
+        if (s.notes) {
+            html += `<div style="margin-bottom:20px; padding:12px; background:#f3f4f6; border-radius:8px;">
+                <label style="font-size:0.75rem; color:#6b7280; font-weight:700; display:block; margin-bottom:4px;">NOTES</label>
+                <div style="font-style:italic; color:#374151;">${escapeHtml(s.notes)}</div>
+            </div>`;
+        }
+
+        // Strength Sets
+        if (s.type === 'strength' && data.sets && data.sets.length) {
+            html += `<h4 style="margin:20px 0 10px 0; color:#4b5563;">Sets</h4>`;
+            html += `<div style="overflow-x:auto;"><table class="table-compact">
+                <thead>
+                    <tr>
+                        <th style="width:40%">Exercise</th>
+                        <th style="text-align:right">Reps</th>
+                        <th style="text-align:right">Weight (kg)</th>
+                        <th style="text-align:right">RPE</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
+            data.sets.forEach(set => {
+                html += `<tr>
+                    <td>${escapeHtml(set.exercise)}</td>
+                    <td style="text-align:right">${set.reps || '-'}</td>
+                    <td style="text-align:right">${set.weight_kg || '-'}</td>
+                    <td style="text-align:right">${set.rpe || '-'}</td>
+                </tr>`;
+            });
+
+            html += `</tbody></table></div>`;
+        }
+
+        showModal(s.name || (s.type === 'run' ? 'Run Details' : 'Strength Workout'), html);
+
     } finally {
         hideLoading();
     }

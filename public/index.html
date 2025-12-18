@@ -1878,6 +1878,20 @@
     </div>
 
     <script src="js/auth-client.js"></script>
+
+    <!-- Generic Modal -->
+    <div id="appModal" class="modal-overlay" onclick="if(event.target === this) closeModal()">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="appModalTitle">Modal Title</h3>
+                <button type="button" class="modal-close-btn" onclick="closeModal()">×</button>
+            </div>
+            <div id="appModalBody" class="modal-body">
+                <!-- Dynamic Content -->
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 
