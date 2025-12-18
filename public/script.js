@@ -143,6 +143,13 @@ function setupEventListeners() {
         if (!t) return;
         openCalorieGoalModal().catch(() => {});
     });
+
+    const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
+    if (sidebarToggleBtn) {
+        sidebarToggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('sidebar-collapsed');
+        });
+    }
     document.getElementById('strengthForm').addEventListener('submit', handleStrengthSubmit);
     document.getElementById('addSetBtn').addEventListener('click', () => addSetRow());
     document.getElementById('refreshFitnessBtn').addEventListener('click', refreshFitnessCharts);

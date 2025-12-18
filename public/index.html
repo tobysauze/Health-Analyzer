@@ -9,6 +9,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
+    <button type="button" class="btn btn-secondary" id="sidebarToggleBtn" style="padding:10px 12px;">
+        <i class="fas fa-bars"></i>
+    </button>
     <div class="container">
         <!-- Header -->
         <header class="header">
@@ -77,63 +80,84 @@
             </div>
         </div>
 
-        <!-- Navigation Tabs -->
-        <nav class="tab-navigation">
-            <button class="tab-btn active" data-tab="dashboard">
-                <i class="fas fa-chart-line"></i> Dashboard
-            </button>
-            <button class="tab-btn" data-tab="sleep">
-                <i class="fas fa-bed"></i> Sleep
-            </button>
-            <button class="tab-btn" data-tab="activity">
-                <i class="fas fa-walking"></i> Activity
-            </button>
-            <button class="tab-btn" data-tab="food">
-                <i class="fas fa-utensils"></i> Food
-            </button>
-            <button class="tab-btn" data-tab="mood">
-                <i class="fas fa-smile"></i> Mood
-            </button>
-            <button class="tab-btn" data-tab="supplements">
-                <i class="fas fa-pills"></i> Supplements
-            </button>
-            <button class="tab-btn" data-tab="medications">
-                <i class="fas fa-prescription-bottle-alt"></i> Medications
-            </button>
-            <button class="tab-btn" data-tab="insights">
-                <i class="fas fa-sparkles"></i> Insights
-            </button>
-            <button class="tab-btn" data-tab="morning-routine">
-                <i class="fas fa-list-check"></i> Morning Routine
-            </button>
-            <button class="tab-btn" data-tab="evening-routine">
-                <i class="fas fa-moon"></i> Evening Routine
-            </button>
-            <button class="tab-btn" data-tab="journal">
-                <i class="fas fa-book"></i> Journal
-            </button>
-            <button class="tab-btn" data-tab="fitness">
-                <i class="fas fa-dumbbell"></i> Fitness
-            </button>
-            <button class="tab-btn" data-tab="bodycomp">
-                <i class="fas fa-weight-scale"></i> Body Comp
-            </button>
-            <button class="tab-btn" data-tab="analysis">
-                <i class="fas fa-brain"></i> Analysis
-            </button>
-            <button class="tab-btn" data-tab="trends">
-                <i class="fas fa-wave-square"></i> Trends
-            </button>
-            <button class="tab-btn" data-tab="labs">
-                <i class="fas fa-vial"></i> Labs
-            </button>
-            <button class="tab-btn" data-tab="genetic">
-                <i class="fas fa-dna"></i> Genetic Data
-            </button>
-            <button class="tab-btn" data-tab="garmin">
-                <i class="fas fa-running"></i> Device Import
-            </button>
-        </nav>
+        <div class="app-main-layout">
+            <!-- Navigation Sidebar -->
+            <nav class="tab-navigation">
+                <button class="tab-btn active" data-tab="dashboard">
+                    <i class="fas fa-chart-line"></i>
+                    <span class="tab-label">Dashboard</span>
+                </button>
+                <button class="tab-btn" data-tab="sleep">
+                    <i class="fas fa-bed"></i>
+                    <span class="tab-label">Sleep</span>
+                </button>
+                <button class="tab-btn" data-tab="activity">
+                    <i class="fas fa-walking"></i>
+                    <span class="tab-label">Activity</span>
+                </button>
+                <button class="tab-btn" data-tab="food">
+                    <i class="fas fa-utensils"></i>
+                    <span class="tab-label">Food</span>
+                </button>
+                <button class="tab-btn" data-tab="mood">
+                    <i class="fas fa-smile"></i>
+                    <span class="tab-label">Mood</span>
+                </button>
+                <button class="tab-btn" data-tab="supplements">
+                    <i class="fas fa-pills"></i>
+                    <span class="tab-label">Supplements</span>
+                </button>
+                <button class="tab-btn" data-tab="medications">
+                    <i class="fas fa-prescription-bottle-alt"></i>
+                    <span class="tab-label">Medications</span>
+                </button>
+                <button class="tab-btn" data-tab="insights">
+                    <i class="fas fa-sparkles"></i>
+                    <span class="tab-label">Insights</span>
+                </button>
+                <button class="tab-btn" data-tab="morning-routine">
+                    <i class="fas fa-list-check"></i>
+                    <span class="tab-label">Morning Routine</span>
+                </button>
+                <button class="tab-btn" data-tab="evening-routine">
+                    <i class="fas fa-moon"></i>
+                    <span class="tab-label">Evening Routine</span>
+                </button>
+                <button class="tab-btn" data-tab="journal">
+                    <i class="fas fa-book"></i>
+                    <span class="tab-label">Journal</span>
+                </button>
+                <button class="tab-btn" data-tab="fitness">
+                    <i class="fas fa-dumbbell"></i>
+                    <span class="tab-label">Fitness</span>
+                </button>
+                <button class="tab-btn" data-tab="bodycomp">
+                    <i class="fas fa-weight-scale"></i>
+                    <span class="tab-label">Body Comp</span>
+                </button>
+                <button class="tab-btn" data-tab="analysis">
+                    <i class="fas fa-brain"></i>
+                    <span class="tab-label">Analysis</span>
+                </button>
+                <button class="tab-btn" data-tab="trends">
+                    <i class="fas fa-wave-square"></i>
+                    <span class="tab-label">Trends</span>
+                </button>
+                <button class="tab-btn" data-tab="labs">
+                    <i class="fas fa-vial"></i>
+                    <span class="tab-label">Labs</span>
+                </button>
+                <button class="tab-btn" data-tab="genetic">
+                    <i class="fas fa-dna"></i>
+                    <span class="tab-label">Genetic Data</span>
+                </button>
+                <button class="tab-btn" data-tab="garmin">
+                    <i class="fas fa-running"></i>
+                    <span class="tab-label">Device Import</span>
+                </button>
+            </nav>
+
+            <div class="app-main-content">
 
         <!-- Labs Tab -->
         <div id="labs" class="tab-content">
@@ -1714,7 +1738,10 @@
         </div>
     </div>
 
-    <!-- Loading Overlay -->
+            </div> <!-- end app-main-content -->
+        </div> <!-- end app-main-layout -->
+
+        <!-- Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-spinner">
             <i class="fas fa-spinner fa-spin"></i>
