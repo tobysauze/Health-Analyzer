@@ -36,7 +36,26 @@ let pgPool = null;
 let serverHandle = null;
 
 const app = express();
-// PORT defined at bottom
+const http = require('http');
+const { Server } = require('socket.io');
+
+const server = http.createServer(app);
+const io = new Server(server);
+const PORT = process.env.PORT || 3000;
+
+// Interactive Garmin Sync Handler
+io.on('connection', (socket) => {
+  console.log('Client connected to socket:', socket.id);
+
+  socket.on('garmin:start-sync', async (params) => {
+    try {
+      const { userId, days } = params;
+      await startInteractiveGarminSync(socket, { ...params });
+    } catch (e) {
+      socket.emit('garmin:error', e.message);
+    }
+  });
+});
 
 // Middleware
 // Security headers (safe defaults)
@@ -889,8 +908,15 @@ async function bootstrap() {
     await runMigrations({ runDb, getDb, allDb, bcrypt, crypto, normalizeEmail });
   }
 
-  serverHandle = app.listen(PORT, () => {
+  serverHandle = server.listen(PORT, () => {
     console.log(`Health Analytics Dashboard running on http://localhost:${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`Database: ${USE_PG ? 'PostgreSQL' : 'SQLite'}`);
+    // Only try to ensure user if DB is ready (simple check)
+    if (!USE_PG) {
+      // For SQLite, logic is synchronous-ish mostly
+      ensureAtLeastOneUser();
+    }
   });
 }
 
@@ -5562,32 +5588,9 @@ function analyzeGeneticData(data) {
   };
 }
 
-// Initialize HTTP server and Socket.IO
-const http = require('http');
-const { Server } = require('socket.io');
 
-// Create HTTP server wrapping the Express app
-const server = http.createServer(app);
-const io = new Server(server);
+// Interactive Garmin Sync Handler is now setup at top of file
 
-// Interactive Garmin Sync Handler
-io.on('connection', (socket) => {
-  console.log('Client connected to socket:', socket.id);
-
-  socket.on('garmin:start-sync', async (params) => {
-    try {
-      const { userId, days } = params;
-      // Force authentication check again if needed, or trust the socket session if linked
-      // For simplicity, we assume the user is authorized if they can reach this socket event
-      // In prod, check cookie/session here.
-
-      await startInteractiveGarminSync(socket, { ...params });
-
-    } catch (e) {
-      socket.emit('garmin:error', e.message);
-    }
-  });
-});
 
 async function startInteractiveGarminSync(socket, { days = 30 }) {
   if (String(process.env.ENABLE_GARMINDB_AUTOSYNC || '').toLowerCase() !== 'true') {
@@ -5697,18 +5700,6 @@ process.on('SIGINT', () => {
     });
   } else {
     process.exit(0);
-  }
-});
-
-const PORT = process.env.PORT || 3000;
-serverHandle = server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`Database: ${USE_PG ? 'PostgreSQL' : 'SQLite'}`);
-  // Only try to ensure user if DB is ready (simple check)
-  if (!USE_PG) {
-    // For SQLite, logic is synchronous-ish mostly
-    ensureAtLeastOneUser();
   }
 });
 
