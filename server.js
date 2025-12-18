@@ -29,6 +29,11 @@ const { initializeDatabase, runMigrations } = require('./server/migrations');
 const { extractJournalSignalsLLM, generateMarkdownLLM, analyzeFoodPackagingLLM, estimateFoodFromTextLLM } = require('./server/llm');
 const { startOfWeekMonday, parseIsoDate, computeWeekRollup } = require('./server/insights');
 
+// Global handles so both SQLite and Postgres modes can access them
+let db = null;
+let pgPool = null;
+let serverHandle = null;
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -256,9 +261,6 @@ if (!USE_PG) {
 // Ensure upload directories exist (required for multer destinations)
 try { fs.mkdirSync(path.join(process.cwd(), 'uploads', 'tmp'), { recursive: true }); } catch {}
 try { fs.mkdirSync(path.join(process.cwd(), 'uploads', 'photos'), { recursive: true }); } catch {}
-
-let db = null;
-let pgPool = null;
 
 if (USE_PG) {
   pgPool = new Pool({
@@ -840,8 +842,6 @@ async function _runMigrationsLegacy() {
 function reqUserId(req) {
   return req.session?.user?.id || req.authUser?.id;
 }
-
-let serverHandle = null;
 
 async function bootstrap() {
   // In Postgres/Supabase mode we assume schema is managed via migrations in the DB itself.
@@ -5602,10 +5602,15 @@ process.on('SIGINT', () => {
   try {
     if (serverHandle) serverHandle.close(() => {});
   } catch {}
-  db.close((err) => {
-    if (err) console.error(err.message);
-    console.log('Database connection closed.');
+
+  if (!USE_PG && db) {
+    db.close((err) => {
+      if (err) console.error(err.message);
+      console.log('Database connection closed.');
+      process.exit(0);
+    });
+  } else {
     process.exit(0);
-  });
+  }
 });
 
