@@ -23,12 +23,6 @@
                         <i class="fas fa-right-from-bracket"></i> Logout
                     </button>
                 </div>
-                <button id="expandAllBtn" class="btn btn-secondary">
-                    <i class="fas fa-expand-arrows-alt"></i> Expand All
-                </button>
-                <button id="collapseAllBtn" class="btn btn-secondary">
-                    <i class="fas fa-compress-arrows-alt"></i> Collapse All
-                </button>
             </div>
         </header>
 
@@ -603,9 +597,8 @@
                 <div class="foodscan-section">
                     <h3><i class="fas fa-apple-alt"></i> Manual Food Log</h3>
                     <div class="data-card">
-                        <div class="card-header" onclick="toggleCard('foodLogCard')">
+                        <div class="card-header">
                             <h3><i class="fas fa-apple-alt"></i> Food Log</h3>
-                            <span class="card-toggle" id="foodLogToggle">▶</span>
                         </div>
                         <div class="card-content expanded" id="foodLogCard">
                             <div class="form-row" style="align-items:end; margin-bottom: 10px;">
@@ -851,9 +844,8 @@
         <div id="sleep" class="tab-content">
             <div class="data-entry-container">
                 <div class="data-card">
-                    <div class="card-header" onclick="toggleCard('sleepCard')">
+                    <div class="card-header">
                         <h3><i class="fas fa-bed"></i> Sleep Tracking</h3>
-                        <span class="card-toggle" id="sleepToggle">▶</span>
                     </div>
                     <div class="card-content" id="sleepCard">
                         <form id="sleepForm" class="data-form">
@@ -906,9 +898,8 @@
         <div id="activity" class="tab-content">
             <div class="data-entry-container">
                 <div class="data-card">
-                    <div class="card-header" onclick="toggleCard('activityCard')">
+                    <div class="card-header">
                         <h3><i class="fas fa-walking"></i> Activity Monitoring</h3>
-                        <span class="card-toggle" id="activityToggle">▶</span>
                     </div>
                     <div class="card-content" id="activityCard">
                         <form id="activityForm" class="data-form">
@@ -951,9 +942,8 @@
         <div id="mood" class="tab-content">
             <div class="data-entry-container">
                 <div class="data-card">
-                    <div class="card-header" onclick="toggleCard('moodCard')">
+                    <div class="card-header">
                         <h3><i class="fas fa-smile"></i> Mood & Stress Tracking</h3>
-                        <span class="card-toggle" id="moodToggle">▶</span>
                     </div>
                     <div class="card-content" id="moodCard">
                         <form id="moodForm" class="data-form">
@@ -1006,9 +996,8 @@
         <div id="supplements" class="tab-content">
             <div class="data-entry-container">
                 <div class="data-card">
-                    <div class="card-header" onclick="toggleCard('supplementsCard')">
+                    <div class="card-header">
                         <h3><i class="fas fa-pills"></i> Supplements Tracking</h3>
-                        <span class="card-toggle" id="supplementsToggle">▶</span>
                     </div>
                     <div class="card-content" id="supplementsCard" style="display:block;">
                         <div class="form-row" style="align-items:end;">
@@ -1082,9 +1071,8 @@
         <div id="medications" class="tab-content">
             <div class="data-entry-container">
                 <div class="data-card">
-                    <div class="card-header" onclick="toggleCard('medicationsCard')">
+                    <div class="card-header">
                         <h3><i class="fas fa-prescription-bottle-alt"></i> Medications Logging</h3>
-                        <span class="card-toggle" id="medicationsToggle">▶</span>
                     </div>
                     <div class="card-content" id="medicationsCard" style="display:block;">
                         <div class="form-row" style="align-items:end;">

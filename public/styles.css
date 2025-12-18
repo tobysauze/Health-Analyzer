@@ -738,15 +738,9 @@ body.sidebar-collapsed .app-main-content {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     padding: 20px 25px;
-    cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: all 0.3s ease;
-}
-
-.card-header:hover {
-    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
 }
 
 .card-header h3 {
@@ -757,20 +751,12 @@ body.sidebar-collapsed .app-main-content {
     gap: 12px;
 }
 
-.card-toggle {
-    font-size: 16px;
-    transition: transform 0.3s ease;
-    font-weight: bold;
-}
-
 .card-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease, padding 0.3s ease;
+    padding: 25px;
 }
 
+/* Legacy: keep expanded class working if still used */
 .card-content.expanded {
-    max-height: 1000px;
     padding: 25px;
 }
 
