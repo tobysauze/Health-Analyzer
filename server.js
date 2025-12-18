@@ -614,7 +614,11 @@ function toPgParams(sql, params) {
 
 function runDb(sql, params = []) {
   if (USE_PG) {
-    const { text, values } = toPgParams(sql, params);
+    let { text, values } = toPgParams(sql, params);
+    // Automatically add RETURNING id for INSERT statements to get lastID
+    if (/^\s*INSERT\s+INTO\s+/i.test(text) && !/RETURNING\s+/i.test(text)) {
+      text = text.replace(/;?\s*$/, ' RETURNING id');
+    }
     return pgPool.query(text, values).then(res => ({
       lastID: res.rows?.[0]?.id ?? null,
       changes: res.rowCount
