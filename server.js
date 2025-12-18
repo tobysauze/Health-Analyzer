@@ -82,9 +82,28 @@ if (!sessionSecret) {
 // Prefer the discrete PG* vars when available to avoid URL parsing issues.
 const USE_PG = !!(process.env.PGHOST || process.env.DATABASE_URL);
 
+// Build Postgres Pool config for sessions (same logic as main DB pool below)
+function buildPgPoolConfig() {
+  if (process.env.PGHOST) {
+    return {
+      host: process.env.PGHOST,
+      port: parseInt(process.env.PGPORT || '5432', 10),
+      database: process.env.PGDATABASE || 'postgres',
+      user: process.env.PGUSER || 'postgres',
+      password: process.env.PGPASSWORD || '',
+      ssl: { rejectUnauthorized: false }
+    };
+  }
+  // Fallback to DATABASE_URL if PGHOST not set
+  return {
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
+  };
+}
+
 const sessionStore = USE_PG
   ? new PgSession({
-      conString: process.env.DATABASE_URL,
+      pool: new Pool(buildPgPoolConfig()),
       tableName: 'sessions'
     })
   : new SQLiteStore({
