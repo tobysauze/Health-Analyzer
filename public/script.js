@@ -18,7 +18,7 @@ let foodPackagingPreviewUrls = [];
 let exerciseLibrary = [];
 
 // Initialize the application
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     initializeApp();
 });
 
@@ -30,12 +30,12 @@ function startApp() {
     // Safe to load app data now
     loadDashboardData();
     // Preload journal list (safe even if tab not open yet)
-    loadJournalList().catch(() => {});
-    loadFoodPhotos().catch(() => {});
+    loadJournalList().catch(() => { });
+    loadFoodPhotos().catch(() => { });
     // Default strength sets table
     initStrengthSetsTable();
     // Preload exercise library for Fitness autocomplete
-    refreshExerciseLibrary().catch(() => {});
+    refreshExerciseLibrary().catch(() => { });
 }
 
 async function initializeApp() {
@@ -58,7 +58,7 @@ async function initializeApp() {
 function setupEventListeners() {
     // Tab navigation
     document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             switchTab(this.dataset.tab);
         });
     });
@@ -76,22 +76,22 @@ function setupEventListeners() {
     document.getElementById('moodForm').addEventListener('submit', handleMoodSubmit);
     // Supplements (new regimen + day view)
     const supplementsDayRefreshBtn = document.getElementById('supplementsDayRefreshBtn');
-    if (supplementsDayRefreshBtn) supplementsDayRefreshBtn.addEventListener('click', () => loadSupplementsDay().catch(() => {}));
+    if (supplementsDayRefreshBtn) supplementsDayRefreshBtn.addEventListener('click', () => loadSupplementsDay().catch(() => { }));
     const supplementsDayDate = document.getElementById('supplementsDayDate');
-    if (supplementsDayDate) supplementsDayDate.addEventListener('change', () => loadSupplementsDay().catch(() => {}));
+    if (supplementsDayDate) supplementsDayDate.addEventListener('change', () => loadSupplementsDay().catch(() => { }));
     const supplementRegimenForm = document.getElementById('supplementRegimenForm');
     if (supplementRegimenForm) supplementRegimenForm.addEventListener('submit', handleSupplementRegimenSubmit);
     const suppRegimensRefreshBtn = document.getElementById('suppRegimensRefreshBtn');
-    if (suppRegimensRefreshBtn) suppRegimensRefreshBtn.addEventListener('click', () => loadSupplementRegimens().catch(() => {}));
+    if (suppRegimensRefreshBtn) suppRegimensRefreshBtn.addEventListener('click', () => loadSupplementRegimens().catch(() => { }));
     // Medications (new regimen + day view)
     const medicationsDayRefreshBtn = document.getElementById('medicationsDayRefreshBtn');
-    if (medicationsDayRefreshBtn) medicationsDayRefreshBtn.addEventListener('click', () => loadMedicationsDay().catch(() => {}));
+    if (medicationsDayRefreshBtn) medicationsDayRefreshBtn.addEventListener('click', () => loadMedicationsDay().catch(() => { }));
     const medicationsDayDate = document.getElementById('medicationsDayDate');
-    if (medicationsDayDate) medicationsDayDate.addEventListener('change', () => loadMedicationsDay().catch(() => {}));
+    if (medicationsDayDate) medicationsDayDate.addEventListener('change', () => loadMedicationsDay().catch(() => { }));
     const medicationRegimenForm = document.getElementById('medicationRegimenForm');
     if (medicationRegimenForm) medicationRegimenForm.addEventListener('submit', handleMedicationRegimenSubmit);
     const medRegimensRefreshBtn = document.getElementById('medRegimensRefreshBtn');
-    if (medRegimensRefreshBtn) medRegimensRefreshBtn.addEventListener('click', () => loadMedicationRegimens().catch(() => {}));
+    if (medRegimensRefreshBtn) medRegimensRefreshBtn.addEventListener('click', () => loadMedicationRegimens().catch(() => { }));
     document.getElementById('geneticUploadForm').addEventListener('submit', handleGeneticUpload);
     document.getElementById('garminUploadForm').addEventListener('submit', handleGarminUpload);
     const appleHealthForm = document.getElementById('appleHealthUploadForm');
@@ -104,12 +104,12 @@ function setupEventListeners() {
     const foodPackagingForm = document.getElementById('foodPackagingForm');
     if (foodPackagingForm) foodPackagingForm.addEventListener('submit', handleFoodPackagingUpload);
     setupFoodPackagingPaste();
-    loadFoodPackagingModels().catch(() => {});
+    loadFoodPackagingModels().catch(() => { });
     document.getElementById('runForm').addEventListener('submit', handleRunSubmit);
 
     const setCalorieGoalBtn = document.getElementById('setCalorieGoalBtn');
     if (setCalorieGoalBtn) {
-        setCalorieGoalBtn.addEventListener('click', () => openCalorieGoalModal().catch(() => {}));
+        setCalorieGoalBtn.addEventListener('click', () => openCalorieGoalModal().catch(() => { }));
     }
     const caloriesCard = document.getElementById('caloriesCard');
     if (caloriesCard) {
@@ -143,17 +143,17 @@ function setupEventListeners() {
     document.addEventListener('click', (e) => {
         const t = e.target?.closest?.('#setCalorieGoalBtn');
         if (!t) return;
-        openCalorieGoalModal().catch(() => {});
+        openCalorieGoalModal().catch(() => { });
     });
 
     // Sidebar toggle buttons (floating and in-menu)
     const sidebarToggleBtnFloating = document.getElementById('sidebarToggleBtnFloating');
     const sidebarToggleBtnInMenu = document.getElementById('sidebarToggleBtnInMenu');
-    
+
     const toggleSidebar = () => {
         document.body.classList.toggle('sidebar-collapsed');
     };
-    
+
     if (sidebarToggleBtnFloating) {
         sidebarToggleBtnFloating.addEventListener('click', toggleSidebar);
     }
@@ -176,7 +176,7 @@ function setupEventListeners() {
     const foodLogGoPackagingBtn = document.getElementById('foodLogGoPackagingBtn');
     if (foodLogGoPackagingBtn) foodLogGoPackagingBtn.addEventListener('click', () => goToFoodScanTool('packagingScanSection'));
     const foodAiEstimateBtn = document.getElementById('foodAiEstimateBtn');
-    if (foodAiEstimateBtn) foodAiEstimateBtn.addEventListener('click', () => estimateFoodFromText().catch(() => {}));
+    if (foodAiEstimateBtn) foodAiEstimateBtn.addEventListener('click', () => estimateFoodFromText().catch(() => { }));
     document.getElementById('bodyCompImportForm').addEventListener('submit', handleBodyCompImport);
 
     // Analysis buttons
@@ -200,12 +200,12 @@ function setupEventListeners() {
     if (routineTodayBtn) routineTodayBtn.addEventListener('click', () => {
         const input = document.getElementById('routineDate');
         if (input) input.value = new Date().toISOString().split('T')[0];
-        loadMorningRoutine().catch(() => {});
+        loadMorningRoutine().catch(() => { });
     });
     const routineRefreshBtn = document.getElementById('routineRefreshBtn');
-    if (routineRefreshBtn) routineRefreshBtn.addEventListener('click', () => loadMorningRoutine().catch(() => {}));
+    if (routineRefreshBtn) routineRefreshBtn.addEventListener('click', () => loadMorningRoutine().catch(() => { }));
     const routineDate = document.getElementById('routineDate');
-    if (routineDate) routineDate.addEventListener('change', () => loadMorningRoutine().catch(() => {}));
+    if (routineDate) routineDate.addEventListener('change', () => loadMorningRoutine().catch(() => { }));
     const routineSeedMetricsBtn = document.getElementById('routineSeedMetricsBtn');
     if (routineSeedMetricsBtn) routineSeedMetricsBtn.addEventListener('click', seedRoutineMetrics);
     const routineAddItemForm = document.getElementById('routineAddItemForm');
@@ -216,12 +216,12 @@ function setupEventListeners() {
     if (eveningTodayBtn) eveningTodayBtn.addEventListener('click', () => {
         const input = document.getElementById('eveningRoutineDate');
         if (input) input.value = new Date().toISOString().split('T')[0];
-        loadEveningRoutine().catch(() => {});
+        loadEveningRoutine().catch(() => { });
     });
     const eveningRefreshBtn = document.getElementById('eveningRoutineRefreshBtn');
-    if (eveningRefreshBtn) eveningRefreshBtn.addEventListener('click', () => loadEveningRoutine().catch(() => {}));
+    if (eveningRefreshBtn) eveningRefreshBtn.addEventListener('click', () => loadEveningRoutine().catch(() => { }));
     const eveningDate = document.getElementById('eveningRoutineDate');
-    if (eveningDate) eveningDate.addEventListener('change', () => loadEveningRoutine().catch(() => {}));
+    if (eveningDate) eveningDate.addEventListener('change', () => loadEveningRoutine().catch(() => { }));
     const eveningSeedBtn = document.getElementById('eveningRoutineSeedBtn');
     if (eveningSeedBtn) eveningSeedBtn.addEventListener('click', seedEveningRoutine);
     const eveningAddForm = document.getElementById('eveningRoutineAddItemForm');
@@ -299,7 +299,7 @@ function goToFoodScanTool(targetId) {
             const d2 = document.getElementById('foodPackagingDate');
             if (d2) d2.value = foodDate;
         }
-    } catch {}
+    } catch { }
 }
 
 async function runGarminDbAutoSync() {
@@ -379,7 +379,7 @@ function openTabAndScroll(tabId, targetId) {
             toggleCard(targetId);
         }
         el?.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
-    } catch {}
+    } catch { }
 }
 
 // Tab Navigation
@@ -407,28 +407,28 @@ function switchTab(tabName) {
     } else if (tabName === 'food') {
         loadFoodPhotos();
     } else if (tabName === 'fitness') {
-        refreshExerciseLibrary().catch(() => {});
+        refreshExerciseLibrary().catch(() => { });
         refreshFitnessCharts();
         loadRecentWorkouts();
     } else if (tabName === 'insights') {
-        refreshWeeklyInsights().catch(() => {});
-        loadCheckins().catch(() => {});
+        refreshWeeklyInsights().catch(() => { });
+        loadCheckins().catch(() => { });
     } else if (tabName === 'morning-routine') {
-        loadMorningRoutine().catch(() => {});
+        loadMorningRoutine().catch(() => { });
     } else if (tabName === 'evening-routine') {
-        loadEveningRoutine().catch(() => {});
+        loadEveningRoutine().catch(() => { });
     } else if (tabName === 'bodycomp') {
         refreshBodyComp();
     } else if (tabName === 'trends') {
-        loadTrendsTab().catch(() => {});
+        loadTrendsTab().catch(() => { });
     } else if (tabName === 'labs') {
-        loadLabsTab().catch(() => {});
+        loadLabsTab().catch(() => { });
     } else if (tabName === 'supplements') {
-        loadSupplementsDay().catch(() => {});
-        loadSupplementRegimens().catch(() => {});
+        loadSupplementsDay().catch(() => { });
+        loadSupplementRegimens().catch(() => { });
     } else if (tabName === 'medications') {
-        loadMedicationsDay().catch(() => {});
-        loadMedicationRegimens().catch(() => {});
+        loadMedicationsDay().catch(() => { });
+        loadMedicationRegimens().catch(() => { });
     }
 }
 
@@ -1529,7 +1529,7 @@ function renderFoodPackagingPreviews() {
 
     // Cleanup old URLs
     for (const u of foodPackagingPreviewUrls) {
-        try { URL.revokeObjectURL(u); } catch {}
+        try { URL.revokeObjectURL(u); } catch { }
     }
     foodPackagingPreviewUrls = [];
 
@@ -2008,9 +2008,8 @@ function renderExerciseAutocomplete(inputEl) {
         <div class="exercise-autocomplete-menu" role="listbox">
             ${items.map((it, idx) => `
                 <div class="exercise-autocomplete-item ${idx === activeIndex ? 'active' : ''}" data-idx="${idx}">
-                    <div class="exercise-autocomplete-title">${
-                        it.kind === 'new' ? escapeHtml(it.label) : highlightMatchHtml(it.name, query)
-                    }</div>
+                    <div class="exercise-autocomplete-title">${it.kind === 'new' ? escapeHtml(it.label) : highlightMatchHtml(it.name, query)
+        }</div>
                     ${it.meta ? `<div class="exercise-autocomplete-meta">${escapeHtml(it.meta)}</div>` : ''}
                 </div>
             `).join('')}
@@ -2297,7 +2296,7 @@ async function handleStrengthSubmit(e) {
         // Auto-save any new exercise names into the shared library
         const uniqueExercises = [...new Set(sets.map(s => s.exercise).filter(Boolean))];
         await Promise.all(uniqueExercises.map(ex => upsertExerciseClient(ex)));
-        refreshExerciseLibrary().catch(() => {});
+        refreshExerciseLibrary().catch(() => { });
 
         if (sets.length) {
             const resp2 = await fetch(`/api/workouts/session/${sessionId}/sets`, {
@@ -2418,7 +2417,7 @@ async function renderStrengthCharts() {
         if (!exercise) {
             const counts = {};
             rows.forEach(r => { counts[r.exercise] = (counts[r.exercise] || 0) + 1; });
-            const top = Object.entries(counts).sort((a,b)=>b[1]-a[1])[0]?.[0];
+            const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0];
             data = top ? rows.filter(r => r.exercise === top) : [];
         }
 
@@ -2431,15 +2430,17 @@ async function renderStrengthCharts() {
 
         charts.strength1rmChart = new Chart(ctx1, {
             type: 'line',
-            data: { labels, datasets: [{
-                label: 'Estimated 1RM (kg)',
-                data: est1rm,
-                borderColor: '#f59e0b',
-                backgroundColor: 'rgba(245, 158, 11, 0.12)',
-                borderWidth: 3,
-                fill: true,
-                tension: 0.35
-            }]},
+            data: {
+                labels, datasets: [{
+                    label: 'Estimated 1RM (kg)',
+                    data: est1rm,
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.12)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.35
+                }]
+            },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -2450,13 +2451,15 @@ async function renderStrengthCharts() {
 
         charts.strengthVolumeChart = new Chart(ctxV, {
             type: 'bar',
-            data: { labels, datasets: [{
-                label: 'Volume (kg)',
-                data: volume,
-                backgroundColor: 'rgba(99, 102, 241, 0.75)',
-                borderColor: '#6366f1',
-                borderWidth: 1
-            }]},
+            data: {
+                labels, datasets: [{
+                    label: 'Volume (kg)',
+                    data: volume,
+                    backgroundColor: 'rgba(99, 102, 241, 0.75)',
+                    borderColor: '#6366f1',
+                    borderWidth: 1
+                }]
+            },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -2500,9 +2503,14 @@ async function loadRecentWorkouts() {
                             <div class="journal-item__title">${escapeHtml(title)}</div>
                             <div class="journal-item__meta">${new Date(s.date).toLocaleDateString()} • ${s.type}</div>
                         </div>
-                        <button class="btn btn-secondary" style="padding:8px 12px;" onclick="viewWorkout(${s.id})">
-                            <i class="fas fa-eye"></i> View
-                        </button>
+                        <div style="display:flex; gap:8px;">
+                            <button class="btn btn-secondary" style="padding:8px 12px;" onclick="viewWorkout(${s.id})">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                            <button class="btn btn-secondary" style="padding:8px 12px; color:#ef4444;" onclick="deleteWorkout(${s.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
                     </div>
                     ${pills.length ? `<div class="pill-row">${pills.join('')}</div>` : ''}
                     ${s.notes ? `<div style="margin-top:10px; color:#374151;">${escapeHtml(s.notes)}</div>` : ''}
@@ -2513,6 +2521,26 @@ async function loadRecentWorkouts() {
         box.innerHTML = `<div class="journal-item"><div class="journal-item__meta">Network error loading workouts</div></div>`;
     }
 }
+
+async function deleteWorkout(id) {
+    if (!confirm('Are you sure you want to delete this workout?')) return;
+    showLoading();
+    try {
+        const resp = await fetch(`/api/workouts/${id}`, { method: 'DELETE' });
+        if (!resp.ok) {
+            const data = await resp.json();
+            showNotification(data.error || 'Failed to delete workout', 'error');
+            return;
+        }
+        showNotification('Workout deleted', 'success');
+        await refreshFitnessCharts();
+    } catch (e) {
+        showNotification('Network error', 'error');
+    } finally {
+        hideLoading();
+    }
+}
+window.deleteWorkout = deleteWorkout;
 
 async function viewWorkout(id) {
     showLoading();
@@ -2611,14 +2639,16 @@ async function renderBodyCompCharts() {
 
         const mkLine = (ctx, data, color) => new Chart(ctx, {
             type: 'line',
-            data: { labels, datasets: [{
-                data,
-                borderColor: color,
-                backgroundColor: color.replace('1)', '0.12)'),
-                borderWidth: 3,
-                fill: true,
-                tension: 0.35
-            }]},
+            data: {
+                labels, datasets: [{
+                    data,
+                    borderColor: color,
+                    backgroundColor: color.replace('1)', '0.12)'),
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.35
+                }]
+            },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -2677,7 +2707,7 @@ async function loadBodyCompList() {
 function toggleCard(cardId) {
     const cardContent = document.getElementById(cardId);
     const toggle = document.getElementById(cardId.replace('Card', 'Toggle'));
-    
+
     if (cardContent.classList.contains('expanded')) {
         cardContent.classList.remove('expanded');
         toggle.textContent = '▶';
@@ -2709,8 +2739,8 @@ function collapseAllCards() {
 function setupRangeSliders() {
     document.querySelectorAll('input[type="range"]').forEach(slider => {
         const valueDisplay = slider.parentNode.querySelector('.range-value');
-        
-        slider.addEventListener('input', function() {
+
+        slider.addEventListener('input', function () {
             valueDisplay.textContent = this.value;
         });
     });
@@ -2739,10 +2769,10 @@ function setDefaultDates() {
 async function handleSleepSubmit(e) {
     e.preventDefault();
     showLoading();
-    
+
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData);
-    
+
     try {
         const response = await fetch('/api/sleep', {
             method: 'POST',
@@ -2751,9 +2781,9 @@ async function handleSleepSubmit(e) {
             },
             body: JSON.stringify(data)
         });
-        
+
         const result = await response.json();
-        
+
         if (response.ok) {
             showNotification('Sleep data saved successfully!', 'success');
             e.target.reset();
@@ -2772,10 +2802,10 @@ async function handleSleepSubmit(e) {
 async function handleActivitySubmit(e) {
     e.preventDefault();
     showLoading();
-    
+
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData);
-    
+
     try {
         const response = await fetch('/api/activity', {
             method: 'POST',
@@ -2784,9 +2814,9 @@ async function handleActivitySubmit(e) {
             },
             body: JSON.stringify(data)
         });
-        
+
         const result = await response.json();
-        
+
         if (response.ok) {
             showNotification('Activity data saved successfully!', 'success');
             e.target.reset();
@@ -2805,10 +2835,10 @@ async function handleActivitySubmit(e) {
 async function handleNutritionSubmit(e) {
     e.preventDefault();
     showLoading();
-    
+
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData);
-    
+
     try {
         const response = await fetch('/api/nutrition', {
             method: 'POST',
@@ -2817,9 +2847,9 @@ async function handleNutritionSubmit(e) {
             },
             body: JSON.stringify(data)
         });
-        
+
         const result = await response.json();
-        
+
         if (response.ok) {
             showNotification('Nutrition data saved successfully!', 'success');
             e.target.reset();
@@ -2838,7 +2868,7 @@ async function handleNutritionSubmit(e) {
 async function handleFoodLogSubmit(e) {
     e.preventDefault();
     showLoading();
-    
+
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData);
     // If user filled quantity but not serving size, auto-fill serving_size
@@ -2846,7 +2876,7 @@ async function handleFoodLogSubmit(e) {
         const u = data.quantity_unit || '';
         data.serving_size = `${data.quantity} ${u}`.trim();
     }
-    
+
     try {
         const response = await fetch('/api/food-log', {
             method: 'POST',
@@ -2855,9 +2885,9 @@ async function handleFoodLogSubmit(e) {
             },
             body: JSON.stringify(data)
         });
-        
+
         const result = await response.json();
-        
+
         if (response.ok) {
             showNotification('Food log entry saved successfully!', 'success');
             e.target.reset();
@@ -2877,10 +2907,10 @@ async function handleFoodLogSubmit(e) {
 async function handleMoodSubmit(e) {
     e.preventDefault();
     showLoading();
-    
+
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData);
-    
+
     try {
         const response = await fetch('/api/mood', {
             method: 'POST',
@@ -2889,9 +2919,9 @@ async function handleMoodSubmit(e) {
             },
             body: JSON.stringify(data)
         });
-        
+
         const result = await response.json();
-        
+
         if (response.ok) {
             showNotification('Mood data saved successfully!', 'success');
             e.target.reset();
@@ -2911,10 +2941,10 @@ async function handleMoodSubmit(e) {
 async function handleSupplementsSubmit(e) {
     e.preventDefault();
     showLoading();
-    
+
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData);
-    
+
     try {
         const response = await fetch('/api/supplements', {
             method: 'POST',
@@ -2923,15 +2953,15 @@ async function handleSupplementsSubmit(e) {
             },
             body: JSON.stringify(data)
         });
-        
+
         const result = await response.json();
-        
+
         if (response.ok) {
             showNotification('Supplement added successfully!', 'success');
             e.target.reset();
             setDefaultDates();
             // New UI uses regimen list; refresh it if present
-            loadSupplementsDay().catch(() => {});
+            loadSupplementsDay().catch(() => { });
         } else {
             showNotification(result.error || 'Error adding supplement', 'error');
         }
@@ -3064,9 +3094,9 @@ async function loadSupplementRegimens() {
         box.querySelectorAll('button[data-regimen-del]').forEach(btn => {
             btn.addEventListener('click', async () => {
                 const id = Number(btn.getAttribute('data-regimen-del'));
-                await fetch(`/api/supplements/regimens/${id}`, { method: 'DELETE' }).catch(() => {});
+                await fetch(`/api/supplements/regimens/${id}`, { method: 'DELETE' }).catch(() => { });
                 await loadSupplementRegimens();
-                await loadSupplementsDay().catch(() => {});
+                await loadSupplementsDay().catch(() => { });
             });
         });
     } finally {
@@ -3079,7 +3109,7 @@ async function saveSupplementOverride(payload) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
-    }).catch(() => {});
+    }).catch(() => { });
 }
 
 async function handleSupplementRegimenSubmit(e) {
@@ -3113,7 +3143,7 @@ async function handleSupplementRegimenSubmit(e) {
         showNotification('Regimen added', 'success');
         e.target.reset();
         await loadSupplementsDay();
-        await loadSupplementRegimens().catch(() => {});
+        await loadSupplementRegimens().catch(() => { });
     } finally {
         hideLoading();
     }
@@ -3122,10 +3152,10 @@ async function handleSupplementRegimenSubmit(e) {
 async function handleMedicationsSubmit(e) {
     e.preventDefault();
     showLoading();
-    
+
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData);
-    
+
     try {
         const response = await fetch('/api/medications', {
             method: 'POST',
@@ -3134,9 +3164,9 @@ async function handleMedicationsSubmit(e) {
             },
             body: JSON.stringify(data)
         });
-        
+
         const result = await response.json();
-        
+
         if (response.ok) {
             showNotification('Medication added successfully!', 'success');
             e.target.reset();
@@ -3240,7 +3270,7 @@ async function saveMedicationOverride(payload) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
-    }).catch(() => {});
+    }).catch(() => { });
 }
 
 async function loadMedicationRegimens() {
@@ -3280,9 +3310,9 @@ async function loadMedicationRegimens() {
         box.querySelectorAll('button[data-med-regimen-del]').forEach(btn => {
             btn.addEventListener('click', async () => {
                 const id = Number(btn.getAttribute('data-med-regimen-del'));
-                await fetch(`/api/medications/regimens/${id}`, { method: 'DELETE' }).catch(() => {});
+                await fetch(`/api/medications/regimens/${id}`, { method: 'DELETE' }).catch(() => { });
                 await loadMedicationRegimens();
-                await loadMedicationsDay().catch(() => {});
+                await loadMedicationsDay().catch(() => { });
             });
         });
     } finally {
@@ -3320,8 +3350,8 @@ async function handleMedicationRegimenSubmit(e) {
         }
         showNotification('Regimen added', 'success');
         e.target.reset();
-        await loadMedicationsDay().catch(() => {});
-        await loadMedicationRegimens().catch(() => {});
+        await loadMedicationsDay().catch(() => { });
+        await loadMedicationRegimens().catch(() => { });
     } finally {
         hideLoading();
     }
@@ -3329,34 +3359,34 @@ async function handleMedicationRegimenSubmit(e) {
 
 async function handleGeneticUpload(e) {
     e.preventDefault();
-    
+
     const fileInput = document.getElementById('geneticFile');
     const file = fileInput.files[0];
-    
+
     if (!file) {
         showNotification('Please select a file to upload', 'error');
         return;
     }
-    
+
     // Check file type
     const allowedTypes = ['.csv', '.xlsx', '.xls'];
     const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
-    
+
     if (!allowedTypes.includes(fileExtension)) {
         showNotification('Please upload a CSV or Excel file (.csv, .xlsx, .xls)', 'error');
         return;
     }
-    
+
     showLoading();
-    
+
     const formData = new FormData(e.target);
-    
+
     try {
         const response = await fetch('/api/genetic-upload', {
             method: 'POST',
             body: formData
         });
-        
+
         let result;
         try {
             result = await response.json();
@@ -3367,7 +3397,7 @@ async function handleGeneticUpload(e) {
             hideLoading();
             return;
         }
-        
+
         if (response.ok) {
             showNotification('Genetic data uploaded and analyzed successfully!', 'success');
             displayGeneticResults(result.analysis);
@@ -3536,7 +3566,7 @@ async function openCalorieGoalModal() {
             if (e.target === modal) closeCalorieGoalModal();
         });
         modal.querySelector('#calGoalCloseBtn')?.addEventListener('click', closeCalorieGoalModal);
-        modal.querySelector('#calGoalSaveBtn')?.addEventListener('click', () => saveCalorieGoalFromModal().catch(() => {}));
+        modal.querySelector('#calGoalSaveBtn')?.addEventListener('click', () => saveCalorieGoalFromModal().catch(() => { }));
     }
 
     // Load current goal into modal
@@ -3548,7 +3578,7 @@ async function openCalorieGoalModal() {
         if (input) input.value = v != null ? String(v) : '';
         const hint = document.getElementById('calGoalHint');
         if (hint) hint.textContent = v != null ? `Current goal: ${v} kcal/day` : 'No goal set yet.';
-    } catch {}
+    } catch { }
 
     document.getElementById('calorieGoalModal').style.display = 'flex';
     setTimeout(() => document.getElementById('calGoalInput')?.focus(), 50);
@@ -3597,7 +3627,7 @@ function createCharts() {
 
 function createSleepChart() {
     const ctx = document.getElementById('sleepChart').getContext('2d');
-    
+
     if (charts.sleepChart) {
         charts.sleepChart.destroy();
     }
@@ -3652,7 +3682,7 @@ function createSleepChart() {
 
 function createActivityChart() {
     const ctx = document.getElementById('activityChart').getContext('2d');
-    
+
     if (charts.activityChart) {
         charts.activityChart.destroy();
     }
@@ -3702,7 +3732,7 @@ function createActivityChart() {
 
 function createMoodChart() {
     const ctx = document.getElementById('moodChart').getContext('2d');
-    
+
     if (charts.moodChart) {
         charts.moodChart.destroy();
     }
@@ -3768,7 +3798,7 @@ function createMoodChart() {
 
 function createNutritionChart() {
     const ctx = document.getElementById('nutritionChart').getContext('2d');
-    
+
     if (charts.nutritionChart) {
         charts.nutritionChart.destroy();
     }
@@ -3897,11 +3927,11 @@ function updateRecentEntries() {
 // Analysis Functions
 async function runCorrelationAnalysis() {
     showLoading();
-    
+
     try {
         // Simulate correlation analysis
         await new Promise(resolve => setTimeout(resolve, 2000));
-        
+
         const correlations = [
             { factor1: 'Sleep Score', factor2: 'Mood Score', correlation: 0.72, pValue: 0.001 },
             { factor1: 'Steps', factor2: 'Energy Score', correlation: 0.58, pValue: 0.02 },
@@ -3919,7 +3949,7 @@ async function runCorrelationAnalysis() {
 
 function displayCorrelationResults(correlations) {
     const resultsDiv = document.getElementById('correlationResults');
-    
+
     if (correlations.length === 0) {
         resultsDiv.innerHTML = '<p>No significant correlations found.</p>';
         return;
@@ -3942,11 +3972,11 @@ function displayCorrelationResults(correlations) {
 
 async function checkDrugInteractions() {
     showLoading();
-    
+
     try {
         // Simulate drug interaction check
         await new Promise(resolve => setTimeout(resolve, 1500));
-        
+
         const interactions = [
             {
                 drug1: 'Vitamin D',
@@ -3973,7 +4003,7 @@ async function checkDrugInteractions() {
 
 function displayInteractionResults(interactions) {
     const resultsDiv = document.getElementById('interactionResults');
-    
+
     if (interactions.length === 0) {
         resultsDiv.innerHTML = '<p>No significant drug interactions found.</p>';
         return;
@@ -3996,11 +4026,11 @@ function displayInteractionResults(interactions) {
 
 async function generateRecommendations() {
     showLoading();
-    
+
     try {
         // Simulate recommendation generation
         await new Promise(resolve => setTimeout(resolve, 2000));
-        
+
         const recommendations = [
             {
                 category: 'Sleep',
@@ -4030,7 +4060,7 @@ async function generateRecommendations() {
 
 function displayRecommendations(recommendations) {
     const resultsDiv = document.getElementById('recommendationsResults');
-    
+
     resultsDiv.innerHTML = recommendations.map(rec => `
         <div style="background: white; border-radius: 8px; padding: 15px; margin-bottom: 10px; border-left: 4px solid ${rec.priority === 'High' ? '#f56565' : rec.priority === 'Medium' ? '#ed8936' : '#48bb78'};">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
@@ -4051,7 +4081,7 @@ function displayRecommendations(recommendations) {
 // Genetic Data Functions
 function displayGeneticResults(analysis) {
     const resultsDiv = document.getElementById('geneticResults');
-    
+
     resultsDiv.innerHTML = `
         <div style="background: white; border-radius: 8px; padding: 20px;">
             <h4 style="color: #4a5568; margin-bottom: 15px;">Analysis Summary</h4>
@@ -4079,7 +4109,7 @@ async function loadGeneticData() {
     try {
         const response = await fetch('/api/genetic-data');
         const geneticData = await response.json();
-        
+
         if (response.ok) {
             displayGeneticDataList(geneticData);
         } else {
@@ -4092,7 +4122,7 @@ async function loadGeneticData() {
 
 function displayGeneticDataList(geneticDataList) {
     const resultsDiv = document.getElementById('geneticResults');
-    
+
     if (geneticDataList.length === 0) {
         resultsDiv.innerHTML = `
             <div style="text-align: center; color: #718096; padding: 40px;">
@@ -4103,7 +4133,7 @@ function displayGeneticDataList(geneticDataList) {
         `;
         return;
     }
-    
+
     resultsDiv.innerHTML = `
         <div style="margin-bottom: 20px;">
             <h4 style="color: #4a5568; margin-bottom: 15px;">
@@ -4137,9 +4167,9 @@ function displayGeneticDataList(geneticDataList) {
                         <div style="margin-top: 10px;">
                             <strong style="color: #4a5568;">Key Recommendations:</strong>
                             <ul style="color: #718096; margin-top: 8px; margin-left: 20px;">
-                                ${data.analysis_results.recommendations ? 
-                                    data.analysis_results.recommendations.slice(0, 3).map(rec => `<li>${rec}</li>`).join('') 
-                                    : '<li>No recommendations available</li>'}
+                                ${data.analysis_results.recommendations ?
+                data.analysis_results.recommendations.slice(0, 3).map(rec => `<li>${rec}</li>`).join('')
+                : '<li>No recommendations available</li>'}
                             </ul>
                         </div>
                     </div>
@@ -4154,7 +4184,7 @@ async function viewGeneticData(id) {
         showLoading();
         const response = await fetch(`/api/genetic-data/${id}`);
         const data = await response.json();
-        
+
         if (response.ok) {
             displayGeneticDataDetails(data);
         } else {
@@ -4169,12 +4199,12 @@ async function viewGeneticData(id) {
 
 function displayGeneticDataDetails(data) {
     const resultsDiv = document.getElementById('geneticResults');
-    
+
     // Parse CSV data to show preview
     const csvLines = data.data.split('\n').slice(0, 11); // First 10 rows
     const csvPreview = csvLines.join('\n');
     const totalRows = data.data.split('\n').length;
-    
+
     resultsDiv.innerHTML = `
         <div style="margin-bottom: 20px;">
             <button onclick="loadGeneticData()" class="btn btn-secondary" style="margin-bottom: 15px;">
@@ -4214,18 +4244,18 @@ function displayGeneticDataDetails(data) {
                     <div style="background: rgba(102, 126, 234, 0.05); border-radius: 8px; padding: 20px; margin-bottom: 15px;">
                         <h6 style="color: #4a5568; margin-bottom: 10px;">Recommendations:</h6>
                         <ul style="color: #718096; margin-left: 20px;">
-                            ${data.analysis_results.recommendations ? 
-                                data.analysis_results.recommendations.map(rec => `<li style="margin-bottom: 8px;">${rec}</li>`).join('') 
-                                : '<li>No recommendations available</li>'}
+                            ${data.analysis_results.recommendations ?
+                data.analysis_results.recommendations.map(rec => `<li style="margin-bottom: 8px;">${rec}</li>`).join('')
+                : '<li>No recommendations available</li>'}
                         </ul>
                     </div>
                     
                     <div style="background: rgba(237, 137, 54, 0.05); border-radius: 8px; padding: 20px;">
                         <h6 style="color: #4a5568; margin-bottom: 10px;">Risk Factors:</h6>
                         <ul style="color: #718096; margin-left: 20px;">
-                            ${data.analysis_results.riskFactors ? 
-                                data.analysis_results.riskFactors.map(risk => `<li style="margin-bottom: 8px;">${risk}</li>`).join('') 
-                                : '<li>No risk factors identified</li>'}
+                            ${data.analysis_results.riskFactors ?
+                data.analysis_results.riskFactors.map(risk => `<li style="margin-bottom: 8px;">${risk}</li>`).join('')
+                : '<li>No risk factors identified</li>'}
                         </ul>
                     </div>
                 </div>
@@ -4257,7 +4287,7 @@ async function loadGarminData() {
     try {
         const response = await fetch('/api/garmin-data');
         const data = await response.json();
-        
+
         if (response.ok) {
             displayGarminData(data);
         } else {
@@ -4287,7 +4317,7 @@ async function loadTrendsTab() {
     const applyQuick30 = () => {
         if (fromEl) fromEl.value = d30Iso;
         if (toEl) toEl.value = todayIso;
-        loadTrendsTab().catch(() => {});
+        loadTrendsTab().catch(() => { });
     };
 
     const btn30 = document.getElementById('trendsLast30Btn');
@@ -4298,7 +4328,7 @@ async function loadTrendsTab() {
     const btnRefresh = document.getElementById('trendsRefreshBtn');
     if (btnRefresh && !btnRefresh.dataset.bound) {
         btnRefresh.dataset.bound = '1';
-        btnRefresh.addEventListener('click', () => loadTrendsTab().catch(() => {}));
+        btnRefresh.addEventListener('click', () => loadTrendsTab().catch(() => { }));
     }
 
     const from = fromEl?.value || d30Iso;
@@ -4482,7 +4512,7 @@ async function loadTrendsTab() {
                 const vals = arr.map(x => x[field]).filter(v => v != null).map(Number).filter(n => !Number.isNaN(n));
                 if (!vals.length) return null;
                 // average across workouts that day
-                return vals.reduce((a,b)=>a+b,0) / vals.length;
+                return vals.reduce((a, b) => a + b, 0) / vals.length;
             });
             addMetricChart('garmin_training_load', 'Garmin: Training load (avg/day)', workoutAgg('training_load'), '#111827');
             addMetricChart('garmin_training_effect', 'Garmin: Training effect (avg/day)', workoutAgg('training_effect'), '#334155');
@@ -4545,7 +4575,7 @@ async function loadTrendsTab() {
 function displayGarminData(data) {
     // Find or create the data view section
     let dataViewSection = document.getElementById('garminDataView');
-    
+
     if (!dataViewSection) {
         // Create the section if it doesn't exist
         const garminContainer = document.querySelector('.garmin-container');
@@ -4558,10 +4588,10 @@ function displayGarminData(data) {
             return;
         }
     }
-    
+
     const summary = data.summary || {};
     const totalRecords = summary.totalActivities + summary.totalSleepRecords + summary.totalHeartRateRecords + summary.totalStressRecords;
-    
+
     if (totalRecords === 0) {
         dataViewSection.innerHTML = `
             <h3><i class="fas fa-database"></i> Imported Data</h3>
@@ -4573,7 +4603,7 @@ function displayGarminData(data) {
         `;
         return;
     }
-    
+
     dataViewSection.innerHTML = `
         <h3><i class="fas fa-database"></i> Imported Data Overview</h3>
         
@@ -4748,7 +4778,7 @@ async function loadLabsTab() {
     const refreshBtn = document.getElementById('labsRefreshBtn');
     if (refreshBtn && !refreshBtn.dataset.bound) {
         refreshBtn.dataset.bound = '1';
-        refreshBtn.addEventListener('click', () => loadLabsTab().catch(() => {}));
+        refreshBtn.addEventListener('click', () => loadLabsTab().catch(() => { }));
     }
 
     // default date
@@ -4815,11 +4845,11 @@ function renderLabsList(rows) {
                 </thead>
                 <tbody>
                     ${data.map(r => {
-                        const val = r.value_num != null ? r.value_num : (r.value_text || '');
-                        const ref = (r.ref_low != null || r.ref_high != null)
-                            ? `${r.ref_low != null ? r.ref_low : ''}–${r.ref_high != null ? r.ref_high : ''}`
-                            : '';
-                        return `
+        const val = r.value_num != null ? r.value_num : (r.value_text || '');
+        const ref = (r.ref_low != null || r.ref_high != null)
+            ? `${r.ref_low != null ? r.ref_low : ''}–${r.ref_high != null ? r.ref_high : ''}`
+            : '';
+        return `
                             <tr>
                                 <td style="padding:10px; border-bottom:1px solid rgba(0,0,0,.06);">${escapeHtml(String(r.date || ''))}</td>
                                 <td style="padding:10px; border-bottom:1px solid rgba(0,0,0,.06); font-weight:700;">${escapeHtml(String(r.biomarker || ''))}</td>
@@ -4829,7 +4859,7 @@ function renderLabsList(rows) {
                                 <td style="padding:10px; border-bottom:1px solid rgba(0,0,0,.06);">${escapeHtml(String(r.source || ''))}</td>
                             </tr>
                         `;
-                    }).join('')}
+    }).join('')}
                 </tbody>
             </table>
         </div>
@@ -4952,35 +4982,35 @@ async function handleLabsImport(e) {
 // Garmin Integration
 async function handleGarminUpload(e) {
     e.preventDefault();
-    
+
     const fileInput = document.getElementById('garminFile');
     const file = fileInput.files[0];
-    
+
     if (!file) {
         showNotification('Please select a Garmin data file to upload', 'error');
         return;
     }
-    
+
     // Check file type
     const allowedTypes = ['.csv', '.xlsx', '.xls', '.tcx', '.gpx'];
     const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
-    
+
     if (!allowedTypes.includes(fileExtension)) {
         showNotification('Please upload a Garmin file (.csv, .xlsx, .xls, .tcx, .gpx)', 'error');
         return;
     }
-    
+
     showLoading();
-    
+
     const formData = new FormData(e.target);
     const resultsDiv = document.getElementById('garminImportResults');
-    
+
     try {
         const response = await fetch('/api/garmin-upload', {
             method: 'POST',
             body: formData
         });
-        
+
         let result;
         try {
             result = await response.json();
@@ -4991,12 +5021,12 @@ async function handleGarminUpload(e) {
             hideLoading();
             return;
         }
-        
+
         if (response.ok) {
             // Display import results
             const imported = result.imported || {};
             const totalImported = (imported.activities || 0) + (imported.sleep || 0) + (imported.heartRate || 0) + (imported.stress || 0);
-            
+
             resultsDiv.innerHTML = `
                 <div style="background: rgba(72, 187, 120, 0.1); border-radius: 12px; padding: 20px; border-left: 4px solid #48bb78;">
                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
@@ -5042,13 +5072,13 @@ async function handleGarminUpload(e) {
                     </div>
                 </div>
             `;
-            
+
             showNotification(`Successfully imported ${totalImported} records from Garmin data!`, 'success');
             e.target.reset();
-            
+
             // Reload Garmin data view to show imported data
             loadGarminData();
-            
+
             // Reload dashboard to show new data
             if (document.getElementById('dashboard').classList.contains('active')) {
                 loadDashboardData();
@@ -5289,7 +5319,7 @@ async function exportData() {
         const dataStr = JSON.stringify(exportData, null, 2);
         const dataBlob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(dataBlob);
-        
+
         const link = document.createElement('a');
         link.href = url;
         link.download = `health-data-export-${new Date().toISOString().split('T')[0]}.json`;
@@ -5297,7 +5327,7 @@ async function exportData() {
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
-        
+
         showNotification('Data exported successfully!', 'success');
     } catch (error) {
         showNotification('Error exporting data', 'error');
@@ -5317,14 +5347,14 @@ function showNotification(message, type = 'info') {
     const toast = document.getElementById('notificationToast');
     const icon = toast.querySelector('.toast-icon');
     const messageEl = toast.querySelector('.toast-message');
-    
+
     // Set icon and message
     icon.className = `toast-icon ${type}`;
     messageEl.textContent = message;
-    
+
     // Show toast
     toast.classList.add('show');
-    
+
     // Hide after 3 seconds
     setTimeout(() => {
         toast.classList.remove('show');

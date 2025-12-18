@@ -4484,6 +4484,20 @@ app.get('/api/workouts/:id', async (req, res) => {
   }
 });
 
+app.delete('/api/workouts/:id', async (req, res) => {
+  try {
+    const userId = reqUserId(req);
+    const id = Number(req.params.id);
+    const session = await getDb('SELECT id FROM workout_sessions WHERE id = ? AND user_id = ?', [id, userId]);
+    if (!session) return res.status(404).json({ error: 'session not found' });
+
+    await runDb('DELETE FROM workout_sessions WHERE id = ?', [id]);
+    res.json({ message: 'Deleted workout' });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // Progress: runs (distance/pace over time)
 app.get('/api/workouts/progress/runs', async (req, res) => {
   try {

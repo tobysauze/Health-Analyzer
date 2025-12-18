@@ -1769,3 +1769,8 @@ body.sidebar-collapsed .app-main-content {
     display: block;
 }
 
+
+/* Collapsible Utility */
+.collapsible:not(.expanded) {
+    display: none !important;
+}
