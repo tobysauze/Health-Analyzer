@@ -63,9 +63,11 @@ function setupEventListeners() {
         });
     });
 
-    // Expand/Collapse all buttons
-    document.getElementById('expandAllBtn').addEventListener('click', expandAllCards);
-    document.getElementById('collapseAllBtn').addEventListener('click', collapseAllCards);
+    // Expand/Collapse all buttons (optional - may have been removed)
+    const expandAllBtn = document.getElementById('expandAllBtn');
+    const collapseAllBtn = document.getElementById('collapseAllBtn');
+    if (expandAllBtn) expandAllBtn.addEventListener('click', expandAllCards);
+    if (collapseAllBtn) collapseAllBtn.addEventListener('click', collapseAllCards);
 
     // Form submissions
     document.getElementById('sleepForm').addEventListener('submit', handleSleepSubmit);
