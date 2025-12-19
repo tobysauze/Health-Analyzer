@@ -102,39 +102,67 @@ def main():
             print(f"[WRAPPER] Login failed: {e}")
             sys.exit(1)
 
-    # 3. Launch the actual CLI tool
+    # 3. Launch the actual CLI tool IN-PROCESS
+    # This ensures the `garth` module (and its authenticated session) is shared.
     
-    if len(sys.argv) < 2:
-        print("[WRAPPER] Error: No target executable specified.")
-        sys.exit(1)
-
-    target_cli = sys.argv[1]
-    args = sys.argv[1:]
+    import runpy
     
-    # Force use of our config file directory
-    # -f expects a DIRECTORY containing GarminConnectConfig.json, not the file itself
-    config_dir_path = GARMINDB_DIR
-    if "-f" not in args:
-        print(f"[WRAPPER] Injecting -f {config_dir_path}")
-        # Insert -f DIR after the executable
-        args.insert(1, "-f")
-        args.insert(2, config_dir_path)
-
-    # execvp expects the first element to be the executable name
-    cmd = args
+    # Locate the script
+    target_cli = "garmindb_cli.py"
+    target_path = None
     
-    # Ensure command starts with the executable name for execvp
-    if cmd[0] != target_cli:
-        cmd.insert(0, target_cli)
-        
-    print(f"[WRAPPER] Launching: {' '.join(cmd)}")
+    # Try finding it in path
+    if len(sys.argv) > 1 and sys.argv[1].endswith(".py"):
+         # If user passed the script path explicitly
+         candidate = sys.argv[1]
+         if os.path.exists(candidate):
+             target_path = candidate
+             # Remove wrapper from argv so CLI sees [script, flags...]
+             sys.argv.pop(0)
+    
+    if not target_path:
+        # Check common locations or PATH
+        path_dirs = os.environ.get("PATH", "").split(os.pathsep)
+        # Add /usr/local/bin explicitly as seen in logs
+        if "/usr/local/bin" not in path_dirs:
+            path_dirs.append("/usr/local/bin")
+            
+        for d in path_dirs:
+            p = os.path.join(d, target_cli)
+            if os.path.exists(p):
+                target_path = p
+                break
+    
+    if not target_path:
+        # Fallback based on previous error log
+        target_path = "/usr/local/bin/garmindb_cli.py"
+    
+    print(f"[WRAPPER] Launching in-process: {target_path}")
+    print(f"[WRAPPER] Args: {sys.argv}")
     print("---------------------------------------------------")
-    sys.stdout.flush()
-
     try:
-        os.execvp(target_cli, cmd)
-    except FileNotFoundError:
-        print(f"[WRAPPER] Error: {target_cli} not found in PATH.")
+        # Patch sys.argv to look like: [garmindb_cli.py, --a, --b...]
+        # Currently sys.argv[0] is garmin_auth_wrapper.py (unless popped above)
+        # If we didn't pop above (because arg1 turned out to be the script name we found in PATH), we should replace argv[0]
+        if sys.argv[0].endswith("garmin_auth_wrapper.py"):
+             sys.argv[0] = target_path
+             # If the second arg was the script name (e.g. wrapper.py garmindb_cli.py ...), remove it to avoid dup
+             if len(sys.argv) > 1 and "garmindb_cli" in sys.argv[1]:
+                 sys.argv.pop(1)
+        
+        # Inject -f if missing, just in case
+        config_dir_path = GARMINDB_DIR
+        if "-f" not in sys.argv:
+             print(f"[WRAPPER] Injecting -f {config_dir_path}")
+             sys.argv.insert(1, config_dir_path)
+             sys.argv.insert(1, "-f")
+
+        runpy.run_path(target_path, run_name='__main__')
+        
+    except Exception as e:
+        print(f"[WRAPPER] Execution failed: {e}")
+        import traceback
+        traceback.print_exc()
         sys.exit(1)
 
 if __name__ == "__main__":
