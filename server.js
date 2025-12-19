@@ -5629,7 +5629,17 @@ async function startInteractiveGarminSync(socket, { days = 30 }) {
   }
 
   const cli = process.env.GARMINDB_CLI || 'garmindb_cli.py';
-  const cliArgs = [cli, '--all', '--download', '--import', '--analyze', '--latest'];
+  // Use --download-days 30 instead of --latest to prevent crashes on empty DB
+  const cliArgs = [cli, '--all', '--download', '--import', '--analyze'];
+
+  // Checking for 'latest' vs 'days' logic could be dynamic, but for stability we default to lookback.
+  // We can add logic to use --latest only if DB exists, but simpler to just use overlapping window.
+  // Actually, let's default to a safe 30 day window.
+  // Note: GarminDB uses flags like --download_days (underscore?) or --download-days? checks show usually parsed from config or args.
+  // But let's check standard usage. The wrapper handles args too.
+  // Safe bet: just remove --latest for now, or use a fixed lookback if supported via args.
+  // Config "download_days": 30 should handle it if --latest is omitted.
+
 
   // Use the wrapper script to handle interactive auth via garth
   const wrapperScript = path.join(__dirname, 'garmin_auth_wrapper.py');

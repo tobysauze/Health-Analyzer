@@ -97,12 +97,23 @@ def main():
                 # It seems stat_start_date looks for specific config or defaults.
                 # Providing a sane default for 'start_date' might help if the tool looks effectively for it.
                 # We'll set it to a reasonable past date.
+                default_start = "2023-01-01"
+                
                 if "start_date" not in config_data["data"]:
-                    config_data["data"]["start_date"] = "2023-01-01"
+                    config_data["data"]["start_date"] = default_start
+                    
+                # Shotgun approach: Inject into common stat blocks to ensure stat_start_date(stat) finds it.
+                # Common stats: monitoring, activities, sleep, weight, rhr
+                stats = ["monitoring", "activities", "sleep", "weight", "rhr", "steps", "floors", "intensity_minutes"]
+                for stat in stats:
+                    if stat not in config_data:
+                        config_data[stat] = {}
+                    if "start_date" not in config_data[stat]:
+                        config_data[stat]["start_date"] = default_start
                 
                 with open(config_file, 'w') as f:
                     json.dump(config_data, f, indent=4)
-                print(f"[WRAPPER] Credentials and defaults written to {config_file}")
+                print(f"[WRAPPER] Credentials and comprehensive defaults written to {config_file}")
                 
                 # Verify content (redacted)
                 with open(config_file, 'r') as f:
