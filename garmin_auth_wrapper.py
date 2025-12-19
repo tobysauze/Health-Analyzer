@@ -82,20 +82,25 @@ def main():
     # The server.js passed it as an environment variable or default
     # But here we probably just want to run "garmindb_cli.py" from path.
     
-    target_cli = "garmindb_cli.py"
-    cmd = [target_cli] + sys.argv[1:]
+    # 3. Launch the actual CLI tool
+    # The first argument passed to this wrapper (sys.argv[1]) is the target executable (e.g., garmindb_cli.py)
+    # The rest (sys.argv[2:]) are the flags.
     
-    print(f"[WRAPPER] Launching: {target_cli} {' '.join(sys.argv[1:])}")
+    if len(sys.argv) < 2:
+        print("[WRAPPER] Error: No target executable specified.")
+        sys.exit(1)
+
+    target_cli = sys.argv[1]
+    # execvp requires the first argument of the list to be the executable name itself (argv[0])
+    cmd = sys.argv[1:] 
+    
+    print(f"[WRAPPER] Launching: {' '.join(cmd)}")
     print("---------------------------------------------------")
     sys.stdout.flush()
 
-    # Use run to wait for it, or execvp to replace. 
-    # execvp is better to keep PIDs simple, but we want to catch exit code? 
-    # Actually execvp replaces the process, so the exit code of this wrapper IS the exit code of the CLI.
     try:
         os.execvp(target_cli, cmd)
     except FileNotFoundError:
-        # Fallback: try full path if not in PATH (unlikely if installed in same env)
         print(f"[WRAPPER] Error: {target_cli} not found in PATH.")
         sys.exit(1)
 
