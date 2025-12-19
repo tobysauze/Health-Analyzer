@@ -84,10 +84,25 @@ def main():
                 
                 config_data["credentials"]["username"] = email
                 config_data["credentials"]["password"] = password
+
+                # Fix for "unsupported operand type(s) for -: 'datetime.date' and 'NoneType'"
+                # This happens if the DB is empty and no start date is configured.
+                if "data" not in config_data:
+                    config_data["data"] = {}
+                
+                # Set defaults if missing
+                if "download_days" not in config_data["data"]:
+                    config_data["data"]["download_days"] = 90
+                
+                # It seems stat_start_date looks for specific config or defaults.
+                # Providing a sane default for 'start_date' might help if the tool looks effectively for it.
+                # We'll set it to a reasonable past date.
+                if "start_date" not in config_data["data"]:
+                    config_data["data"]["start_date"] = "2023-01-01"
                 
                 with open(config_file, 'w') as f:
                     json.dump(config_data, f, indent=4)
-                print(f"[WRAPPER] Credentials written to {config_file}")
+                print(f"[WRAPPER] Credentials and defaults written to {config_file}")
                 
                 # Verify content (redacted)
                 with open(config_file, 'r') as f:
