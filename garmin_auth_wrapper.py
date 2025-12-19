@@ -89,6 +89,12 @@ def main():
                     json.dump(config_data, f, indent=4)
                 print(f"[WRAPPER] Credentials written to {config_file}")
                 
+                # Verify content (redacted)
+                with open(config_file, 'r') as f:
+                    verify_data = json.load(f)
+                    user = verify_data.get('credentials', {}).get('username')
+                    print(f"[WRAPPER] VERIFICATION: Config file contains username: {user}")
+                
             except Exception as e:
                 print(f"[WRAPPER] Warning: Failed to write config file: {e}")
             
@@ -97,17 +103,29 @@ def main():
             sys.exit(1)
 
     # 3. Launch the actual CLI tool
-    # The first argument passed to this wrapper (sys.argv[1]) is the target executable (e.g., garmindb_cli.py)
-    # The rest (sys.argv[2:]) are the flags.
     
     if len(sys.argv) < 2:
         print("[WRAPPER] Error: No target executable specified.")
         sys.exit(1)
 
     target_cli = sys.argv[1]
-    # execvp requires the first argument of the list to be the executable name itself (argv[0])
-    cmd = sys.argv[1:] 
+    args = sys.argv[1:]
     
+    # Force use of our config file
+    config_file_path = os.path.join(GARMINDB_DIR, "GarminConnectConfig.json")
+    if "-f" not in args:
+        print(f"[WRAPPER] Injecting -f {config_file_path}")
+        args = [target_cli, "-f", config_file_path] + sys.argv[2:]
+    else:
+        args = [target_cli] + sys.argv[2:]
+
+    # execvp expects the first element to be the executable name
+    cmd = args
+    
+    # Ensure command starts with the executable name for execvp
+    if cmd[0] != target_cli:
+        cmd.insert(0, target_cli)
+        
     print(f"[WRAPPER] Launching: {' '.join(cmd)}")
     print("---------------------------------------------------")
     sys.stdout.flush()
