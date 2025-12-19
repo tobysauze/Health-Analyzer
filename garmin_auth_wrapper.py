@@ -2,6 +2,7 @@ import sys
 import os
 import time
 import subprocess
+import json
 
 # Ensure we can import modules from the environment
 try:
@@ -55,10 +56,6 @@ def main():
 
         try:
             # garth.login handles MFA interactive prompts if needed (hopefully prints to stdout)
-            # But the node server expects specific MFA prompts.
-            # If garth asks for "Enter MFA code:", we need to make sure server.js catches it.
-            # We will rely on Garth's internal print statements or hook it if needed.
-            # For now, standard login:
             garth.login(email, password)
             print("[WRAPPER] Login successful!")
             
@@ -67,21 +64,38 @@ def main():
                 os.makedirs(SESSION_DIR)
             garth.save(SESSION_DIR)
             print(f"[WRAPPER] Session saved to {SESSION_DIR}")
+
+            # CRITICAL FIX: GarminDB strictly requires credentials in the config file
+            # or it fails with "Missing config" and crashes.
+            # Since we have the valid credentials here, we write them to the config.
+            config_file = os.path.join(GARMINDB_DIR, "GarminConnectConfig.json")
+            try:
+                config_data = {}
+                if os.path.exists(config_file):
+                    with open(config_file, 'r') as f:
+                        try:
+                            config_data = json.load(f)
+                        except json.JSONDecodeError:
+                            config_data = {}
+                
+                # Ensure structure exists
+                if "credentials" not in config_data:
+                    config_data["credentials"] = {}
+                
+                config_data["credentials"]["username"] = email
+                config_data["credentials"]["password"] = password
+                
+                with open(config_file, 'w') as f:
+                    json.dump(config_data, f, indent=4)
+                print(f"[WRAPPER] Credentials written to {config_file}")
+                
+            except Exception as e:
+                print(f"[WRAPPER] Warning: Failed to write config file: {e}")
             
         except Exception as e:
             print(f"[WRAPPER] Login failed: {e}")
-            # If it's an MFA error, garth might have raised it.
-            # We might need a more complex loop for MFA if garth.login() doesn't handle it interactively on stdin/out
             sys.exit(1)
 
-    # 3. Launch the actual GarminDB CLI
-    # We pass through all arguments provided to this wrapper
-    # args[0] is this script name, so we take slice(1)
-    
-    # We need to find the garmindb_cli.py executable
-    # The server.js passed it as an environment variable or default
-    # But here we probably just want to run "garmindb_cli.py" from path.
-    
     # 3. Launch the actual CLI tool
     # The first argument passed to this wrapper (sys.argv[1]) is the target executable (e.g., garmindb_cli.py)
     # The rest (sys.argv[2:]) are the flags.
