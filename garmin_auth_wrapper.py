@@ -111,13 +111,14 @@ def main():
     target_cli = sys.argv[1]
     args = sys.argv[1:]
     
-    # Force use of our config file
-    config_file_path = os.path.join(GARMINDB_DIR, "GarminConnectConfig.json")
+    # Force use of our config file directory
+    # -f expects a DIRECTORY containing GarminConnectConfig.json, not the file itself
+    config_dir_path = GARMINDB_DIR
     if "-f" not in args:
-        print(f"[WRAPPER] Injecting -f {config_file_path}")
-        args = [target_cli, "-f", config_file_path] + sys.argv[2:]
-    else:
-        args = [target_cli] + sys.argv[2:]
+        print(f"[WRAPPER] Injecting -f {config_dir_path}")
+        # Insert -f DIR after the executable
+        args.insert(1, "-f")
+        args.insert(2, config_dir_path)
 
     # execvp expects the first element to be the executable name
     cmd = args
