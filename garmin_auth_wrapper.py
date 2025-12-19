@@ -137,6 +137,20 @@ def main():
         # Fallback based on previous error log
         target_path = "/usr/local/bin/garmindb_cli.py"
     
+    # Monkey-patch garth.Client to return our authenticated global client
+    # This prevents garmindb from creating a new, unauthenticated instance.
+    print("[WRAPPER] Monkey-patching garth.Client...")
+    
+    # Store original just in case (though we won't use it)
+    _OriginalClient = garth.Client 
+    
+    class AuthenticatedClientProxy:
+        def __new__(cls, *args, **kwargs):
+            # Always return the global 'garth.client' which we just logged in.
+            return garth.client
+            
+    garth.Client = AuthenticatedClientProxy
+    
     print(f"[WRAPPER] Launching in-process: {target_path}")
     print(f"[WRAPPER] Args: {sys.argv}")
     print("---------------------------------------------------")
